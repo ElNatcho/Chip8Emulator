@@ -67,8 +67,18 @@ void Chip8::execute() {
 
 	// Decode opcode
 	switch (*_opcode & 0xF000) {
-	case 0x0000: {
+	case 0x0000:
+		switch (*_opcode & 0x000F) {
+		case 0x0000: // 0x00E0: Methode cleart den Screen
+			for (int i = 0; i < _displayMem->size(); i++)
+				_displayMem->at(i) = 0;
+			*_reg_pc += 2;
+			break;
 
+		case 0x000E: // 0x00EE: Springt aus einer Subroutine
+			*_reg_sp -= 1;
+			*_reg_pc = _stack->at(*_reg_sp);
+			break;
 		}
 		break;
 
