@@ -123,9 +123,60 @@ void Chip8::execute() {
 		*_reg_pc += 2;
 		break;
 
-	case 0x8000: {
-	
-		}
+	case 0x8000: 
+		switch (*_opcode & 0x000F) {
+		case 0x0000: // 0x8XY0: VX = VY
+			_reg_v->at((*_opcode & 0x0F00) >> 2) = _reg_v->at((*_opcode & 0x00F0) >> 1);
+			*_reg_pc += 2;
+			break;
+
+		case 0x0001: // 0x8XY1: VX = VX | VY
+			_reg_v->at((*_opcode & 0x0F00) >> 2) |= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at(0xF) = 0;
+			*_reg_pc += 2;
+			break;
+
+		case 0x0002: // 0x8XY2: VX = VX & VY
+			_reg_v->at((*_opcode & 0x0F00) >> 2) &= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at(0xF) = 0;
+			*_reg_pc += 2;
+			break;
+
+		case 0x0003: // 0x8XY3: VX = VX ^ VY
+			_reg_v->at((*_opcode & 0x0F00) >> 2) ^= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at(0xF) = 0;
+			*_reg_pc += 2;
+			break;
+
+		case 0x0004: {// 0x8XY4: VX = VX + VY
+				unsigned short e = _reg_v->at((*_opcode & 0x0F00) >> 2) + _reg_v->at((*_opcode & 0x00F0) >> 1);
+				if (e > 0xFF)
+					_reg_v->at(0xF) = 1;
+				else
+					_reg_v->at(0xF) = 0;
+				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+			}
+			*_reg_pc += 2;
+			break;
+
+		case 0x0005: { // 0x8XY5: VX = VX - VY
+				unsigned short e = _reg_v->at((*_opcode & 0x0F00) >> 2) - _reg_v->at((*_opcode & 0x00F0) >> 1);
+				if (e > 0)
+					_reg_v->at(0xF) = 1;
+				else
+					_reg_v->at(0xF) = 0;
+				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+			}
+			*_reg_pc += 2;
+			break;
+
+		case 0x0006: // 0x8XY6: VX = VX >> 1
+			_reg_v->at(0xF) = _reg_v->at((*_opcode & 0x0F00) >> 3) & 0x01;
+			_reg_v->at((*_opcode & 0x0F00) >> 3) >>= 1;
+			*_reg_pc += 2;
+			break;
+
+		}	
 		break;
 
 	case 0x9000: // 0x9XY0: Nächste Instruktion wird übersprungen wenn VX != VY
@@ -149,20 +200,21 @@ void Chip8::execute() {
 		*_reg_pc += 2;
 		break;
 
-	case 0xD000: // 0xDXYN: Zeichnet ein Sprite an Pos VX, VY mit einer Breite von 8 Pixel und der Höhe N. Daten für die Zeile werden ab der Speicheradresse I gelesen
-		unsigned short x_pos = _reg_v->at((*_opcode & 0x0F00) >> 2);
-		unsigned short y_pos = _reg_v->at((*_opcode & 0x00F0) >> 1);
-		unsigned short h = *_opcode & 0x000F;
-		unsigned short pixel;
+	case 0xD000: { // 0xDXYN: Zeichnet ein Sprite an Pos VX, VY mit einer Breite von 8 Pixel und der Höhe N. Daten für die Zeile werden ab der Speicheradresse I gelesen
+			unsigned short x_pos = _reg_v->at((*_opcode & 0x0F00) >> 2);
+			unsigned short y_pos = _reg_v->at((*_opcode & 0x00F0) >> 1);
+			unsigned short h = *_opcode & 0x000F;
+			unsigned short pixel;
 
-		_reg_v->at(0xF) = 0;
-		for (int y = y_pos; y < h; y++) {
-			pixel = _memory->at(*_reg_i + y);
-			for (int x = 0; x < 8; x++) {
-				if ((pixel & (0x80 >> x)) != 0) {
-					if (_displayMem->at(x + x_pos + (y * 64)) == 1)
-						_reg_v->at(0xF) = 1;
-					_displayMem->at(x + x_pos + (y * 64)) ^= 1;
+			_reg_v->at(0xF) = 0;
+			for (int y = y_pos; y < h; y++) {
+				pixel = _memory->at(*_reg_i + y);
+				for (int x = 0; x < 8; x++) {
+					if ((pixel & (0x80 >> x)) != 0) {
+						if (_displayMem->at(x + x_pos + (y * 64)) == 1)
+							_reg_v->at(0xF) = 1;
+						_displayMem->at(x + x_pos + (y * 64)) ^= 1;
+					}
 				}
 			}
 		}
