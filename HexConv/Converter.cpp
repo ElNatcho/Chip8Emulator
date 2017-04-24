@@ -22,6 +22,8 @@ void Converter::convert(std::string hex) {
 	*_strs << std::hex << hex;
 	*_strs >> *_tmpNum;
 
+	_strs->clear();
+
 	// Wert in Datei schreiben
 	if (!_ofstream->is_open()) {
 		std::cout << "FILE_ISNOT_OPEN_EXCEPTION" << std::endl;
@@ -29,6 +31,7 @@ void Converter::convert(std::string hex) {
 	}
 
 	*_ofstream << *_tmpNum;
+	*_ofstream << "\n";
 }
 
 // -- Destruktor --
