@@ -241,8 +241,21 @@ void Chip8::execute() {
 
 		break;
 
-	case 0xE000: {
+	case 0xE000:
+		switch (*_opcode & 0x000F) {
+		case 0x000E: // 0xEX9E: Wenn der Schalter VX gedrückt wurde wird die nächste Instrukton übersprungen
+			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 2) & 0x000F) == KEY_PRESSED)
+				*_reg_pc += 4;
+			else
+				*_reg_pc += 2;
+			break;
 
+		case 0x0001: // 0xEXA1: Wenn der Schalter VX nicht gedrückt wurde wird die nächste Instrukton übersprungen
+			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 2) & 0x000F) != KEY_PRESSED)
+				*_reg_pc += 4;
+			else
+				*_reg_pc += 2;
+			break;
 		}
 		break;
 

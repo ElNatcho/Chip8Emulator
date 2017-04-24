@@ -14,6 +14,9 @@
 #define DISPLAY_SIZE 64 * 32
 #define KEYBOARD_SIZE 16
 
+#define KEY_NOT_PRESSED 0
+#define KEY_PRESSED     1
+
 typedef unsigned char BYTE;
 
 // Chip8
