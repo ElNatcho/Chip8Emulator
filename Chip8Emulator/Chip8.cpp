@@ -17,6 +17,9 @@ Chip8::Chip8() {
 	_sound_timer = new BYTE;
 
 	_opcode = new unsigned short;
+
+	_keyPushedFlag = new bool;
+	_lastKeyPushed = new BYTE;
 }
 
 // -- init --
@@ -267,7 +270,11 @@ void Chip8::execute() {
 			break;
 
 		case 0x000A: // 0xFX0A: Wartet bis ein Knopf gedrückt wurde und Speichert ihn in VX
-
+			do {
+				handleKeys();
+			} while (*_keyPushedFlag);
+			_reg_v->at((*_opcode & 0x0F00) >> 8) = *_lastKeyPushed;
+			*_reg_pc += 2;
 			break;
 
 		case 0x0015: // 0xFX15: delay_timer = VX
@@ -327,7 +334,18 @@ void Chip8::execute() {
 // Methode speichert die aktuellen Key-States
 //
 void Chip8::handleKeys() {
-
+	*_keyPushedFlag = false;
+	for (int i = 0; i < _keys.size(); i++) {
+		if (sf::Keyboard::isKeyPressed(_keys.at(i))) {
+			if (_keyboardMem->at(i) != KEY_PRESSED) {
+				_keyboardMem->at(i) = KEY_PRESSED;
+				*_lastKeyPushed = i;
+				*_keyPushedFlag = true;
+			}
+		} else {
+			_keyboardMem->at(i) = KEY_NOT_PRESSED;
+		}
+	}
 }
 
 // -- Destruktor --
@@ -347,4 +365,7 @@ Chip8::~Chip8() {
 	SAFE_DELETE(_sound_timer);
 
 	SAFE_DELETE(_opcode);
+
+	SAFE_DELETE(_keyPushedFlag);
+	SAFE_DELETE(_lastKeyPushed);
 }

@@ -2,6 +2,7 @@
 #define CHIP8_HPP
 
 // Includes
+#include<SFML\Graphics.hpp>
 #include<iostream>
 #include<array>
 
@@ -18,6 +19,25 @@
 #define KEY_PRESSED     1
 
 typedef unsigned char BYTE;
+
+const std::array<sf::Keyboard::Key, 16> _keys = { 
+	sf::Keyboard::Key::X,
+	sf::Keyboard::Key::Num1,
+	sf::Keyboard::Key::Num2,
+	sf::Keyboard::Key::Num3,
+	sf::Keyboard::Key::Q,
+	sf::Keyboard::Key::W,
+	sf::Keyboard::Key::E,
+	sf::Keyboard::Key::A,
+	sf::Keyboard::Key::S,
+	sf::Keyboard::Key::D,
+	sf::Keyboard::Key::Z,
+	sf::Keyboard::Key::C,
+	sf::Keyboard::Key::Num4,
+	sf::Keyboard::Key::R,
+	sf::Keyboard::Key::F,
+	sf::Keyboard::Key::V
+};
 
 // Chip8
 class Chip8 {
@@ -54,6 +74,9 @@ private:
 	BYTE *_sound_timer;
 
 	unsigned short *_opcode;
+
+	bool *_keyPushedFlag;
+	BYTE *_lastKeyPushed;
 
 };
 
