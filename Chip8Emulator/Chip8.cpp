@@ -270,25 +270,53 @@ void Chip8::execute() {
 
 			break;
 
-		case 0x0015:
+		case 0x0015: // 0xFX15: delay_timer = VX
+			*_delay_timer = _reg_v->at((*_opcode & 0x0F00) >> 8);
+			*_reg_pc += 2;
 			break;
 
-		case 0x0018:
+		case 0x0018: // 0xFX18: sound_timer = VX
+			*_sound_timer = _reg_v->at((*_opcode & 0x0F00) >> 8);
 			break;
 
-		case 0x001E:
+		case 0x001E: // 0xFX1E: I += VX
+			*_reg_i += _reg_v->at((*_opcode & 0x0F00) >> 8);
+			*_reg_pc += 2;
 			break;
 
-		case 0x0029:
+		case 0x0029: // 0xFX29: Setzt I zur Adresse des Sprites das den Buchstaben in VX repräsentiert
+			*_reg_i = _reg_v->at((*_opcode & 0x0F00) >> 8) * 40;
 			break;
 
-		case 0x0033:
+		case 0x0033: { // 0xFX33
+				unsigned short v = _reg_v->at((*_opcode & 0x0F00) >> 8);
+				unsigned short h = v / 100;
+				v -= 100 * h;
+				unsigned short z = v / 10;
+				v -= 10 * z;
+				unsigned short e = v / 1;
+				v -= 1 * e;
+				if (e != 0)
+					throw std::exception("BCD_ERR");
+
+				_memory->at(*_reg_i) = h;
+				_memory->at(*_reg_i + 1) = z;
+				_memory->at(*_reg_i + 2) = e;
+
+				*_reg_pc += 2;
+			}
 			break;
 
-		case 0x0055:
+		case 0x0055: // 0xFX55: Speichert V0 - VX in Memory an der Adresse I
+			for (int i = 0; i < ((*_opcode & 0x0F00) >> 8); i++) {
+				_memory->at(*_reg_i + i) = _reg_v->at(i);
+			}
 			break;
 			
-		case 0x0065:
+		case 0x0065: // 0xFX65: Lädt Register V0 - VX aus der Memory ab der Adresse I
+			for (int i = 0; i < ((*_opcode & 0x0F00) >> 8); i++) {
+				_reg_v->at(i) = _memory->at(*_reg_i + i);
+			}
 			break;
 		}
 		break;
