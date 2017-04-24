@@ -21,9 +21,15 @@
     <ClCompile Include="Chip8.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CProgLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chip8.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CProgLoader.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

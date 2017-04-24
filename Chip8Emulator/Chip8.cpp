@@ -65,18 +65,8 @@ void Chip8::init() {
 // @prog_path: Pfad zum/Name des Programms, dass geladen werden soll
 //
 void Chip8::loadProg(std::string prog_path) {
-	_memory->at(0x200) = 0x60; // V0 = 0
+	_memory->at(0x200) = 0x60;
 	_memory->at(0x201) = 0x00;
-	_memory->at(0x202) = 0x40; // if V0 != 5
-	_memory->at(0x203) = 0x05;
-	_memory->at(0x204) = 0x12; // Goto 0x20A
-	_memory->at(0x205) = 0x0A;
-	_memory->at(0x206) = 0x70; // V0 += 1
-	_memory->at(0x207) = 0x01;
-	_memory->at(0x208) = 0x12; // Goto 0x202
-	_memory->at(0x209) = 0x02;
-	_memory->at(0x20A) = 0xFF; // Exit Code
-	_memory->at(0x20B) = 0xFF;
 
 	*_reg_pc = 0x200;
 }
@@ -85,6 +75,12 @@ void Chip8::loadProg(std::string prog_path) {
 // Methode führt einen Emulationszyklus aus
 //
 void Chip8::execute() {
+	// Testen ob der PC noch im Speicherbereich liegt
+	if (*_reg_pc > 4096) {
+		std::cout << "PC out of Range: " << *_reg_pc << std::endl;
+		return;
+	}
+
 	// Fetch opcode
 	*_opcode = _memory->at(*_reg_pc) << 8 | _memory->at(*_reg_pc + 1);
 
