@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chip8Emulator", "Chip8Emulator\Chip8Emulator.vcxproj", "{3A2CF471-A7CF-4EFC-9E54-770873A1CB6C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexConv", "HexConv\HexConv.vcxproj", "{77E39FE7-B531-4837-83C2-7B6D16756A4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{3A2CF471-A7CF-4EFC-9E54-770873A1CB6C}.Release|x64.Build.0 = Release|x64
 		{3A2CF471-A7CF-4EFC-9E54-770873A1CB6C}.Release|x86.ActiveCfg = Release|Win32
 		{3A2CF471-A7CF-4EFC-9E54-770873A1CB6C}.Release|x86.Build.0 = Release|Win32
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Debug|x64.ActiveCfg = Debug|x64
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Debug|x64.Build.0 = Debug|x64
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Debug|x86.ActiveCfg = Debug|Win32
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Debug|x86.Build.0 = Debug|Win32
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Release|x64.ActiveCfg = Release|x64
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Release|x64.Build.0 = Release|x64
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Release|x86.ActiveCfg = Release|Win32
+		{77E39FE7-B531-4837-83C2-7B6D16756A4B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
