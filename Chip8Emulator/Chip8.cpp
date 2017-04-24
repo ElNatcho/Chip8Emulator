@@ -160,8 +160,8 @@ void Chip8::execute() {
 			break;
 
 		case 0x0005: { // 0x8XY5: VX = VX - VY
-				unsigned short e = _reg_v->at((*_opcode & 0x0F00) >> 2) - _reg_v->at((*_opcode & 0x00F0) >> 1);
-				if (e > 0)
+				short e = _reg_v->at((*_opcode & 0x0F00) >> 2) - _reg_v->at((*_opcode & 0x00F0) >> 1);
+				if (e >= 0)
 					_reg_v->at(0xF) = 1;
 				else
 					_reg_v->at(0xF) = 0;
@@ -172,7 +172,24 @@ void Chip8::execute() {
 
 		case 0x0006: // 0x8XY6: VX = VX >> 1
 			_reg_v->at(0xF) = _reg_v->at((*_opcode & 0x0F00) >> 3) & 0x01;
-			_reg_v->at((*_opcode & 0x0F00) >> 3) >>= 1;
+			_reg_v->at((*_opcode & 0x0F00) >> 2) >>= 1;
+			*_reg_pc += 2;
+			break;
+
+		case 0x0007: { // 0x8XY7: VX = VY - VX
+				short e = _reg_v->at((*_opcode & 0x00F0) >> 1) - _reg_v->at((*_opcode & 0x0F00) >> 2);
+				if (e >= 0)
+					_reg_v->at(0xF) = 1;
+				else
+					_reg_v->at(0xF) = 0;
+				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+			}
+			*_reg_pc += 2;
+			break;
+
+		case 0x000E: // 0x8XYE: VX = VX << 1
+			_reg_v->at(0xF) = (_reg_v->at((*_opcode & 0x0F00) >> 2) & 0xF000) >> 3;
+			_reg_v->at((*_opcode & 0x0F00) >> 2) <<= 1;
 			*_reg_pc += 2;
 			break;
 
