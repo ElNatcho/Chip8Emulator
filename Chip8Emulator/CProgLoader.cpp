@@ -4,6 +4,7 @@
 CProgLoader::CProgLoader() {
 	// Alloc Mem
 	_curPos = new int;
+	_tempStr = new std::string();
 	_ifstream = new std::ifstream();
 	_curOpcode = new short;
 }
@@ -16,6 +17,7 @@ CProgLoader::CProgLoader() {
 void CProgLoader::loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
 	*_curPos = 0x200;
 	*_curOpcode = 0;
+	*_tempStr = "";
 
 	// Datei öffnen
 	if (_ifstream->is_open())
@@ -23,9 +25,10 @@ void CProgLoader::loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
 	_ifstream->open(path);
 
 	// Daten lesen
-	while (!_ifstream->eof() && *_curPos <= MEM_SIZE){
+	while (!_ifstream->eof() && *_curPos < MEM_SIZE){
 		try {
-			(*_ifstream) >> *_curOpcode;
+			std::getline(*_ifstream, *_tempStr);
+			*_curOpcode = std::stoi(*_tempStr);
 			mem->at(*_curPos)	  = (*_curOpcode & 0xFF00) >> 8;
 			mem->at(*_curPos + 1) = (*_curOpcode & 0x00FF);
 		} catch (std::exception &e) {
@@ -42,6 +45,7 @@ void CProgLoader::loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
 CProgLoader::~CProgLoader() {
 	// Free Mem
 	SAFE_DELETE(_curPos);
+	SAFE_DELETE(_tempStr);
 	SAFE_DELETE(_ifstream);
 	SAFE_DELETE(_curOpcode);
 }

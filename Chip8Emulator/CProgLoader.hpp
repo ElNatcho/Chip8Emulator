@@ -26,6 +26,7 @@ private:
 	int *_curPos;
 
 	std::ifstream *_ifstream;
+	std::string *_tempStr;
 
 	short *_curOpcode;
 
