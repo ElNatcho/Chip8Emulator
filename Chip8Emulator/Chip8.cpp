@@ -65,15 +65,20 @@ void Chip8::init() {
 // @prog_path: Pfad zum/Name des Programms, dass geladen werden soll
 //
 void Chip8::loadProg(std::string prog_path) {
-	_memory->at(0xA00) = 0x6000; // V0 = 0
-	_memory->at(0xA01) = 0x4005; // if(V0 != 5)
-	_memory->at(0xA02) = 0x1A05; // goto 0xA05
-	_memory->at(0xA03) = 0x7001; // V0 += 1
-	_memory->at(0xA04) = 0x1A01; // goto 0xA08
-	_memory->at(0xA05) = 0xFFFF; // END Befehl
-	_memory->at(0xA06) = 0x0;
-	_memory->at(0xA07) = 0x0;
-	_memory->at(0xA08) = 0x0;
+	_memory->at(0x200) = 0x60; // V0 = 0
+	_memory->at(0x201) = 0x00;
+	_memory->at(0x202) = 0x40; // if V0 != 5
+	_memory->at(0x203) = 0x05;
+	_memory->at(0x204) = 0x12; // Goto 0x20A
+	_memory->at(0x205) = 0x0A;
+	_memory->at(0x206) = 0x70; // V0 += 1
+	_memory->at(0x207) = 0x01;
+	_memory->at(0x208) = 0x12; // Goto 0x202
+	_memory->at(0x209) = 0x02;
+	_memory->at(0x20A) = 0xFF; // Exit Code
+	_memory->at(0x20B) = 0xFF;
+
+	*_reg_pc = 0x200;
 }
 
 // -- execute --
@@ -119,17 +124,19 @@ void Chip8::execute() {
 		break;
 
 	case 0x3000: // 0x3XNN: Nächste Instruktion wird übersprungen wenn VX == NN
-		if (_reg_v->at((*_opcode & 0x0F00) >> 8) == *_opcode & 0x00FF)
+		if (_reg_v->at((*_opcode & 0x0F00) >> 8) == (*_opcode & 0x00FF))
 			*_reg_pc += 4;
 		else
 			*_reg_pc += 2;
 		break;
 
 	case 0x4000: // 0x4XNN: Nächste Instruktion wird übersprungen wenn VX != NN
-		if (_reg_v->at((*_opcode & 0x0F00) >> 8) != *_opcode & 0x00FF)
+		std::cout << (int)_reg_v->at((*_opcode & 0x0F00) >> 8) << " " << ((*_opcode) & 0x00FF) << std::endl;
+		if ((int)_reg_v->at((*_opcode & 0x0F00) >> 8) != (*_opcode & 0x00FF)) {
 			*_reg_pc += 4;
-		else
+		} else {
 			*_reg_pc += 2;
+		}
 		break;
 
 	case 0x5000: // 0x5XY0: Nächste Instruktion wird übersprungen wenn VX == VY
