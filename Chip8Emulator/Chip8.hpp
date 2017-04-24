@@ -104,6 +104,44 @@ private:
 
 	CProgLoader *_progLoader;
 
+	// -- Member Methods --
+
+	// - OPCODES -
+	void clear_screen_0x00E0();
+	void return_subr_0x00EE();
+	void jump_0x1NNN();
+	void call_subr_0x2NNN();
+	void comp_0x3XNN();
+	void compn_0x4XNN();
+	void compr_0x5XY0();
+	void setr_0x6XNN();
+	void add_0x7XNN();
+	void setr_0x8XY0();
+	void bitOR_0x8XY1();
+	void bitAND_0x8XY2();
+	void bitXOR_0x8XY3();
+	void addr_0x8XY4();
+	void subr_0x8XY5();
+	void bitShR_0x8XY6();
+	void subr_0x8XY7();
+	void bitShL_0x8XYE();
+	void compnr_0x9XY0();
+	void setI_0xANNN();
+	void jumpR_0xBNNN();
+	void setR_rand_0xCXNN();
+	void drawSpr_0xDXYN();
+	void chkKeyR_0xEX9E();
+	void chkNKeyR_0xEXA1();
+	void setRTimer_0xFX07();
+	void waitFKey_0xFX0A();
+	void setDTimer_0xFX15();
+	void setSTimer_0xFX18();
+	void addI_0xFX1E();
+	void setItoSpr_0xFX29();
+	void set_BCD_0xFX33();
+	void reg_dump_0xFX55();
+	void reg_load_0xFX65();
+
 };
 
 #endif

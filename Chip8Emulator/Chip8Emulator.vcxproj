@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Chip8.cpp" />
+    <ClCompile Include="Chip8_Opcodes.cpp" />
     <ClCompile Include="CProgLoader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
