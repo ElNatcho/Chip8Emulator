@@ -6,7 +6,7 @@ int main() {
 	chip8->init();
 	chip8->loadProg("prog1");
 
-	while (true) {
+	while (!*chip8->progDone) {
 		// Nächsten Opcode ausführen
 		chip8->execute();
 

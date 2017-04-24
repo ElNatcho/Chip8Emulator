@@ -18,6 +18,9 @@ Chip8::Chip8() {
 
 	_opcode = new unsigned short;
 
+	drawFlag = new bool;
+	progDone = new bool;
+
 	_keyPushedFlag = new bool;
 	_lastKeyPushed = new BYTE;
 }
@@ -51,6 +54,10 @@ void Chip8::init() {
 	for (int i = 0; i < _keyboardMem->size(); i++) // Clear Keyboard-Mem
 		_keyboardMem->at(i) = 0;
 
+	// Programm-Flags setzen
+	*progDone = false;
+	*drawFlag = true;
+
 }
 
 // -- loadProg --
@@ -58,7 +65,15 @@ void Chip8::init() {
 // @prog_path: Pfad zum/Name des Programms, dass geladen werden soll
 //
 void Chip8::loadProg(std::string prog_path) {
-
+	_memory->at(0xA00) = 0x6000; // V0 = 0
+	_memory->at(0xA01) = 0x4005; // if(V0 != 5)
+	_memory->at(0xA02) = 0x1A05; // goto 0xA05
+	_memory->at(0xA03) = 0x7001; // V0 += 1
+	_memory->at(0xA04) = 0x1A01; // goto 0xA08
+	_memory->at(0xA05) = 0xFFFF; // END Befehl
+	_memory->at(0xA06) = 0x0;
+	_memory->at(0xA07) = 0x0;
+	_memory->at(0xA08) = 0x0;
 }
 
 // -- execute --
@@ -69,6 +84,14 @@ void Chip8::execute() {
 	*_opcode = _memory->at(*_reg_pc) << 8 | _memory->at(*_reg_pc + 1);
 
 	// Decode opcode
+
+	// Testen ob die Anwendung zu Ende ist
+	if (*_opcode == 0xFFFF) {
+		*progDone = true;
+		return;
+	}
+
+	// Instruktion ausführen
 	switch (*_opcode & 0xF000) {
 	case 0x0000:
 		switch (*_opcode & 0x000F) {
@@ -365,6 +388,9 @@ Chip8::~Chip8() {
 	SAFE_DELETE(_sound_timer);
 
 	SAFE_DELETE(_opcode);
+
+	SAFE_DELETE(drawFlag);
+	SAFE_DELETE(progDone);
 
 	SAFE_DELETE(_keyPushedFlag);
 	SAFE_DELETE(_lastKeyPushed);
