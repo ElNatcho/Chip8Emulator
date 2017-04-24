@@ -93,103 +93,103 @@ void Chip8::execute() {
 		break;
 
 	case 0x3000: // 0x3XNN: Nächste Instruktion wird übersprungen wenn VX == NN
-		if (_reg_v->at((*_opcode & 0x0F00) >> 2) == *_opcode & 0x00FF)
+		if (_reg_v->at((*_opcode & 0x0F00) >> 8) == *_opcode & 0x00FF)
 			*_reg_pc += 4;
 		else
 			*_reg_pc += 2;
 		break;
 
 	case 0x4000: // 0x4XNN: Nächste Instruktion wird übersprungen wenn VX != NN
-		if (_reg_v->at((*_opcode & 0x0F00) >> 2) != *_opcode & 0x00FF)
+		if (_reg_v->at((*_opcode & 0x0F00) >> 8) != *_opcode & 0x00FF)
 			*_reg_pc += 4;
 		else
 			*_reg_pc += 2;
 		break;
 
 	case 0x5000: // 0x5XY0: Nächste Instruktion wird übersprungen wenn VX == VY
-		if (_reg_v->at((*_opcode & 0x0F00) >> 2) == _reg_v->at((*_opcode & 0x00F0) >> 1))
+		if (_reg_v->at((*_opcode & 0x0F00) >> 8) == _reg_v->at((*_opcode & 0x00F0) >> 4))
 			*_reg_pc += 4;
 		else
 			*_reg_pc += 2;
 		break;
 
 	case 0x6000: // 0x6XNN: Setzt VX = NN
-		_reg_v->at((*_opcode & 0x0F00) >> 2) = *_opcode & 0x00FF;
+		_reg_v->at((*_opcode & 0x0F00) >> 8) = *_opcode & 0x00FF;
 		*_reg_pc += 2;
 		break;
 
 	case 0x7000: // 0x7XNN: Addiert VX mit NN und speichert es in VX (VX += NN)
-		_reg_v->at((*_opcode & 0x0F00) >> 2) += *_opcode & 0x00FF;
+		_reg_v->at((*_opcode & 0x0F00) >> 8) += *_opcode & 0x00FF;
 		*_reg_pc += 2;
 		break;
 
 	case 0x8000: 
 		switch (*_opcode & 0x000F) {
 		case 0x0000: // 0x8XY0: VX = VY
-			_reg_v->at((*_opcode & 0x0F00) >> 2) = _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at((*_opcode & 0x0F00) >> 8) = _reg_v->at((*_opcode & 0x00F0) >> 4);
 			*_reg_pc += 2;
 			break;
 
 		case 0x0001: // 0x8XY1: VX = VX | VY
-			_reg_v->at((*_opcode & 0x0F00) >> 2) |= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at((*_opcode & 0x0F00) >> 8) |= _reg_v->at((*_opcode & 0x00F0) >> 4);
 			_reg_v->at(0xF) = 0;
 			*_reg_pc += 2;
 			break;
 
 		case 0x0002: // 0x8XY2: VX = VX & VY
-			_reg_v->at((*_opcode & 0x0F00) >> 2) &= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at((*_opcode & 0x0F00) >> 8) &= _reg_v->at((*_opcode & 0x00F0) >> 4);
 			_reg_v->at(0xF) = 0;
 			*_reg_pc += 2;
 			break;
 
 		case 0x0003: // 0x8XY3: VX = VX ^ VY
-			_reg_v->at((*_opcode & 0x0F00) >> 2) ^= _reg_v->at((*_opcode & 0x00F0) >> 1);
+			_reg_v->at((*_opcode & 0x0F00) >> 8) ^= _reg_v->at((*_opcode & 0x00F0) >> 4);
 			_reg_v->at(0xF) = 0;
 			*_reg_pc += 2;
 			break;
 
 		case 0x0004: {// 0x8XY4: VX = VX + VY
-				unsigned short e = _reg_v->at((*_opcode & 0x0F00) >> 2) + _reg_v->at((*_opcode & 0x00F0) >> 1);
+				unsigned short e = _reg_v->at((*_opcode & 0x0F00) >> 8) + _reg_v->at((*_opcode & 0x00F0) >> 4);
 				if (e > 0xFF)
 					_reg_v->at(0xF) = 1;
 				else
 					_reg_v->at(0xF) = 0;
-				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+				_reg_v->at((*_opcode & 0x0F00) >> 8) = e & 0x0000FFFF;
 			}
 			*_reg_pc += 2;
 			break;
 
 		case 0x0005: { // 0x8XY5: VX = VX - VY
-				short e = _reg_v->at((*_opcode & 0x0F00) >> 2) - _reg_v->at((*_opcode & 0x00F0) >> 1);
+				short e = _reg_v->at((*_opcode & 0x0F00) >> 8) - _reg_v->at((*_opcode & 0x00F0) >> 4);
 				if (e >= 0)
 					_reg_v->at(0xF) = 1;
 				else
 					_reg_v->at(0xF) = 0;
-				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+				_reg_v->at((*_opcode & 0x0F00) >> 8) = e & 0x0000FFFF;
 			}
 			*_reg_pc += 2;
 			break;
 
 		case 0x0006: // 0x8XY6: VX = VX >> 1
-			_reg_v->at(0xF) = _reg_v->at((*_opcode & 0x0F00) >> 3) & 0x01;
-			_reg_v->at((*_opcode & 0x0F00) >> 2) >>= 1;
+			_reg_v->at(0xF) = _reg_v->at((*_opcode & 0x0F00) >> 8) & 0x01;
+			_reg_v->at((*_opcode & 0x0F00) >> 8) >>= 1;
 			*_reg_pc += 2;
 			break;
 
 		case 0x0007: { // 0x8XY7: VX = VY - VX
-				short e = _reg_v->at((*_opcode & 0x00F0) >> 1) - _reg_v->at((*_opcode & 0x0F00) >> 2);
+				short e = _reg_v->at((*_opcode & 0x00F0) >> 4) - _reg_v->at((*_opcode & 0x0F00) >> 2);
 				if (e >= 0)
 					_reg_v->at(0xF) = 1;
 				else
 					_reg_v->at(0xF) = 0;
-				_reg_v->at((*_opcode & 0x0F00) >> 2) = e & 0x0000FFFF;
+				_reg_v->at((*_opcode & 0x0F00) >> 8) = e & 0x0000FFFF;
 			}
 			*_reg_pc += 2;
 			break;
 
 		case 0x000E: // 0x8XYE: VX = VX << 1
-			_reg_v->at(0xF) = (_reg_v->at((*_opcode & 0x0F00) >> 2) & 0xF000) >> 3;
-			_reg_v->at((*_opcode & 0x0F00) >> 2) <<= 1;
+			_reg_v->at(0xF) = (_reg_v->at((*_opcode & 0x0F00) >> 8) & 0xF000) >> 3;
+			_reg_v->at((*_opcode & 0x0F00) >> 8) <<= 1;
 			*_reg_pc += 2;
 			break;
 
@@ -197,7 +197,7 @@ void Chip8::execute() {
 		break;
 
 	case 0x9000: // 0x9XY0: Nächste Instruktion wird übersprungen wenn VX != VY
-		if (_reg_v->at((*_opcode & 0x0F00) >> 2) != _reg_v->at((*_opcode & 0x00F0) >> 1))
+		if (_reg_v->at((*_opcode & 0x0F00) >> 8) != _reg_v->at((*_opcode & 0x00F0) >> 4))
 			*_reg_pc += 4;
 		else
 			*_reg_pc += 2;
@@ -213,13 +213,13 @@ void Chip8::execute() {
 		break;
 
 	case 0xC000: // 0xCXNN: Setzt VX = rand() & NN
-		_reg_v->at((*_opcode & 0x0F00) >> 2) = (rand() % 255) & (*_opcode & 0x00FF);
+		_reg_v->at((*_opcode & 0x0F00) >> 8) = (rand() % 255) & (*_opcode & 0x00FF);
 		*_reg_pc += 2;
 		break;
 
 	case 0xD000: { // 0xDXYN: Zeichnet ein Sprite an Pos VX, VY mit einer Breite von 8 Pixel und der Höhe N. Daten für die Zeile werden ab der Speicheradresse I gelesen
-			unsigned short x_pos = _reg_v->at((*_opcode & 0x0F00) >> 2);
-			unsigned short y_pos = _reg_v->at((*_opcode & 0x00F0) >> 1);
+			unsigned short x_pos = _reg_v->at((*_opcode & 0x0F00) >> 8);
+			unsigned short y_pos = _reg_v->at((*_opcode & 0x00F0) >> 4);
 			unsigned short h = *_opcode & 0x000F;
 			unsigned short pixel;
 
@@ -244,14 +244,14 @@ void Chip8::execute() {
 	case 0xE000:
 		switch (*_opcode & 0x000F) {
 		case 0x000E: // 0xEX9E: Wenn der Schalter VX gedrückt wurde wird die nächste Instrukton übersprungen
-			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 2) & 0x000F) == KEY_PRESSED)
+			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 8) & 0x000F) == KEY_PRESSED)
 				*_reg_pc += 4;
 			else
 				*_reg_pc += 2;
 			break;
 
 		case 0x0001: // 0xEXA1: Wenn der Schalter VX nicht gedrückt wurde wird die nächste Instrukton übersprungen
-			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 2) & 0x000F) != KEY_PRESSED)
+			if (_keyboardMem->at(_reg_v->at((*_opcode & 0x0F00) >> 8) & 0x000F) != KEY_PRESSED)
 				*_reg_pc += 4;
 			else
 				*_reg_pc += 2;
@@ -259,8 +259,37 @@ void Chip8::execute() {
 		}
 		break;
 
-	case 0xF000: {
+	case 0xF000:
+		switch (*_opcode & 0x00FF) {
+		case 0x0007: // 0xFX07: VX = delay_timer
+			_reg_v->at((*_opcode & 0x0F00) >> 8) = *_delay_timer;
+			*_reg_pc += 2;
+			break;
 
+		case 0x000A: // 0xFX0A: Wartet bis ein Knopf gedrückt wurde und Speichert ihn in VX
+
+			break;
+
+		case 0x0015:
+			break;
+
+		case 0x0018:
+			break;
+
+		case 0x001E:
+			break;
+
+		case 0x0029:
+			break;
+
+		case 0x0033:
+			break;
+
+		case 0x0055:
+			break;
+			
+		case 0x0065:
+			break;
 		}
 		break;
 	}
