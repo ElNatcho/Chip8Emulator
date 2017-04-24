@@ -1,4 +1,5 @@
 #include"Chip8.hpp"
+#include"CProgLoader.hpp"
 
 // -- Konstruktor --
 Chip8::Chip8() {
@@ -23,6 +24,8 @@ Chip8::Chip8() {
 
 	_keyPushedFlag = new bool;
 	_lastKeyPushed = new BYTE;
+
+	_progLoader = new CProgLoader();
 }
 
 // -- init --
@@ -65,8 +68,7 @@ void Chip8::init() {
 // @prog_path: Pfad zum/Name des Programms, dass geladen werden soll
 //
 void Chip8::loadProg(std::string prog_path) {
-	_memory->at(0x200) = 0x60;
-	_memory->at(0x201) = 0x00;
+	_progLoader->loadProg(prog_path, _memory);
 
 	*_reg_pc = 0x200;
 }
@@ -397,4 +399,6 @@ Chip8::~Chip8() {
 
 	SAFE_DELETE(_keyPushedFlag);
 	SAFE_DELETE(_lastKeyPushed);
+
+	SAFE_DELETE(_progLoader);
 }

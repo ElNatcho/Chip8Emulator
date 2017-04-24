@@ -4,7 +4,7 @@ int main() {
 	Chip8 *chip8 = new Chip8();
 
 	chip8->init();
-	chip8->loadProg("prog1");
+	chip8->loadProg("test_prog.txt");
 
 	while (!*chip8->progDone) {
 		// Nächsten Opcode ausführen

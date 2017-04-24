@@ -23,7 +23,7 @@ void CProgLoader::loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
 	_ifstream->open(path);
 
 	// Daten lesen
-	while (!_ifstream->eof() && *_curPos >= MEM_SIZE){
+	while (!_ifstream->eof() && *_curPos <= MEM_SIZE){
 		try {
 			(*_ifstream) >> *_curOpcode;
 			mem->at(*_curPos)	  = (*_curOpcode & 0xFF00) >> 8;

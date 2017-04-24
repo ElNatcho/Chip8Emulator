@@ -6,6 +6,9 @@
 #include<iostream>
 #include<array>
 
+// Vorwärtsdekleration
+class CProgLoader;
+
 #define SAFE_DELETE(X) {if(X!=nullptr){delete(X); X=nullptr;}}
 
 #define MEM_SIZE   4096
@@ -98,6 +101,8 @@ private:
 
 	bool *_keyPushedFlag;
 	BYTE *_lastKeyPushed;
+
+	CProgLoader *_progLoader;
 
 };
 
