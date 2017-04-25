@@ -131,6 +131,13 @@ void Chip8::handleKeys() {
 	}
 }
 
+// -- getDisplayMem --
+// Methode gibt den Speicher des Displays zurück
+//
+std::array<BYTE, DISPLAY_SIZE> Chip8::getDisplayMem() {
+	return *_displayMem;
+}
+
 // -- Destruktor --
 Chip8::~Chip8() {
 	// Free Memory

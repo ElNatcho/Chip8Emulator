@@ -106,6 +106,8 @@ public:
 	void execute();
 	void handleKeys();
 
+	std::array<BYTE, DISPLAY_SIZE> getDisplayMem();
+
 	// -- Vars -- 
 	bool *drawFlag;
 	bool *progDone;
