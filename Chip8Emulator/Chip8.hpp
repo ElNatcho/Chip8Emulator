@@ -3,6 +3,7 @@
 
 // Includes
 #include<SFML\Graphics.hpp>
+#include<iterator>
 #include<iostream>
 #include<array>
 #include<map>
@@ -109,6 +110,7 @@ private:
 	CProgLoader *_progLoader;
 
 	std::map<short, funcPtr> *_opcodeTable;
+	std::map<short, funcPtr>::iterator _it;
 
 	// -- Member Methods --
 

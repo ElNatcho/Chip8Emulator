@@ -26,6 +26,8 @@ Chip8::Chip8() {
 	_lastKeyPushed = new BYTE;
 
 	_progLoader = new CProgLoader();
+
+	_setup_opcodes();
 }
 
 // -- init --
@@ -96,11 +98,13 @@ void Chip8::execute() {
 
 	// Instruktion ausführen
 	if ((*_opcode & 0xF000) == 0x0000 || (*_opcode & 0xF000) == 0x8000 ||
-		(*_opcode & 0xF000) == 0xE000 || (*_opcode & 0xF000) == 0xF000) {
-		
-	} else {
+		(*_opcode & 0xF000) == 0xE000 || (*_opcode & 0xF000) == 0xF000)
+		_it = _opcodeTable->find(*_opcode & 0xF00F);
+	else
+		_it = _opcodeTable->find(*_opcode & 0xF000);
+	if (_it == _opcodeTable->end()) return;
+	(this->*(_it->second))();
 
-	}
 }
 
 // -- handleKeys --
