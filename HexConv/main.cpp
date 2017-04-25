@@ -12,10 +12,11 @@ int main() {
 	while (true) {
 		std::cout << "0x";
 		std::cin >> hex_val;
-		_converter->convert(hex_val);
-		if (hex_val == "FFFF" || hex_val == "ffff") {
+
+		if (hex_val == "exit")
 			break;
-		}
+
+		_converter->convert(hex_val);
 	}
 
 	delete(_converter);

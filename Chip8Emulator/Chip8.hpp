@@ -125,6 +125,8 @@ private:
 	unsigned short *_reg_sp;
 	unsigned short *_reg_pc;
 
+	unsigned short *_old_pc;
+
 	BYTE *_delay_timer;
 	BYTE *_sound_timer;
 

@@ -6,7 +6,9 @@ int main() {
 	CRenderer *renderer = new CRenderer();
 
 	chip8->init();
-	chip8->loadProg("test_prog.txt");
+	chip8->loadProg("test_disp.txt");
+
+	renderer->renderDisplay(chip8->getDisplayMem());
 
 	while (!*chip8->progDone) {
 		// Nächsten Opcode ausführen

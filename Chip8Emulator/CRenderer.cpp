@@ -13,7 +13,8 @@ CRenderer::CRenderer() {
 
 	// Werte setzen
 	_spr->setScale(SCALE_FAKTOR, SCALE_FAKTOR);
-
+	_img->create(DISPLAY_SIZE_X, DISPLAY_SIZE_Y, sf::Color::Black);
+	_window->clear();
 }
 
 // -- update --
@@ -32,16 +33,19 @@ void CRenderer::update() {
 void CRenderer::renderDisplay(std::array<BYTE, DISPLAY_SIZE> disp_mem) {
 	_window->clear();
 
-	for (int i = 0; i < 0; i++) {
-		if (disp_mem.at(i) == 1) {
-			_img->setPixel((int)i % DISPLAY_SIZE_X, (int)i / DISPLAY_SIZE_Y, sf::Color::White);
-		} else {
-			_img->setPixel((int)i % DISPLAY_SIZE_X, (int)i / DISPLAY_SIZE_Y, sf::Color::Black);
+	for (int y = 0; y < DISPLAY_SIZE_Y; y++) {
+		for (int x = 0; x < DISPLAY_SIZE_X; x++) {
+			if (disp_mem.at(y * DISPLAY_SIZE_X + x) == 1) {
+				_img->setPixel(x, y, sf::Color::White);
+			} else {
+				_img->setPixel(x, y, sf::Color::Black);
+			}
 		}
 	}
 
 	_tex->loadFromImage(*_img);
 	_spr->setTexture(*_tex);
+	_spr->setScale(SCALE_FAKTOR, SCALE_FAKTOR);
 
 	_window->draw(*_spr);
 

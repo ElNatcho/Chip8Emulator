@@ -13,6 +13,7 @@ Chip8::Chip8() {
 	_reg_i  = new unsigned short;
 	_reg_sp = new unsigned short;
 	_reg_pc = new unsigned short;
+	_old_pc = new unsigned short;
 
 	_delay_timer = new BYTE;
 	_sound_timer = new BYTE;
@@ -48,6 +49,7 @@ void Chip8::init() {
 	*_reg_i  = 0; // Addr-Reg zurücksetzen
 	*_reg_sp = 0; // Stack-Ptr zurücksetzen
 	*_reg_pc = 0; // Prog-Counter zurücksetzen
+	*_old_pc = 0; // Prog-Counter (Prüfvariable) zurücksetzen
 
 	// Stack clearen
 	for (int i = 0; i < _stack->size(); i++)
@@ -65,7 +67,7 @@ void Chip8::init() {
 
 	// Programm-Flags setzen
 	*progDone = false;
-	*drawFlag = true;
+	*drawFlag = false;
 
 }
 
@@ -77,15 +79,20 @@ void Chip8::loadProg(std::string prog_path) {
 	_progLoader->loadProg(prog_path, _memory);
 
 	*_reg_pc = 0x200;
+	*_old_pc = 0x200;
 }
 
 // -- execute --
 // Methode führt einen Emulationszyklus aus
 //
 void Chip8::execute() {
+	// DrawFlag zurücksetzen
+	*drawFlag = false;
+
 	// Testen ob der PC noch im Speicherbereich liegt
-	if (*_reg_pc > 4096) {
+	if (*_reg_pc > 4094) {
 		std::cout << "PC out of Range: " << *_reg_pc << std::endl;
+		*progDone = true;
 		return;
 	}
 
@@ -93,12 +100,6 @@ void Chip8::execute() {
 	*_opcode = _memory->at(*_reg_pc) << 8 | _memory->at(*_reg_pc + 1);
 
 	// Decode opcode
-
-	// Testen ob die Anwendung zu Ende ist
-	if (*_opcode == 0xFFFF) {
-		*progDone = true;
-		return;
-	}
 
 	// Instruktion ausführen
 	if ((*_opcode & 0xF000) == 0x0000 || (*_opcode & 0xF000) == 0x8000 ||
@@ -108,9 +109,14 @@ void Chip8::execute() {
 		_it = _opcodeTable->find(*_opcode & 0xF0FF);
 	else
 		_it = _opcodeTable->find(*_opcode & 0xF000);
-	if (_it == _opcodeTable->end()) return;
-	(this->*(_it->second))();
 
+	if (_it != _opcodeTable->end())
+		(this->*(_it->second))();
+
+	if (*_reg_pc == *_old_pc)
+		*_reg_pc += 2;
+
+	*_old_pc = *_reg_pc;
 }
 
 // -- handleKeys --
@@ -150,6 +156,7 @@ Chip8::~Chip8() {
 	SAFE_DELETE(_reg_i);
 	SAFE_DELETE(_reg_sp);
 	SAFE_DELETE(_reg_pc);
+	SAFE_DELETE(_old_pc);
 
 	SAFE_DELETE(_delay_timer);
 	SAFE_DELETE(_sound_timer);
