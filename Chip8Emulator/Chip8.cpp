@@ -38,6 +38,10 @@ void Chip8::init() {
 	for (int i = 0; i < _memory->size(); i++)
 		_memory->at(i) = 0;
 
+	// Fontset in den Speicher laden
+	for (int i = 0; i < FONTSET_SIZE; i++)
+		_memory->at(i) = chip8_fontset[i];
+
 	// Register clearen
 	for (int i = 0; i < _reg_v->size(); i++) // V-Register clearen
 		_reg_v->at(i) = 0;
