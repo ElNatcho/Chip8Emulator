@@ -17,7 +17,10 @@ class CProgLoader;
 #define REG_SIZE   16
 #define STACK_SIZE 16
 
-#define DISPLAY_SIZE  64 * 32
+#define DISPLAY_SIZE_X 64
+#define DISPLAY_SIZE_Y 32
+#define DISPLAY_SIZE   DISPLAY_SIZE_X * DISPLAY_SIZE_Y
+
 #define KEYBOARD_SIZE 16
 
 #define KEY_NOT_PRESSED 0

@@ -27,12 +27,18 @@
     <ClCompile Include="Chip8_Opcodes.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CRenderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chip8.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CProgLoader.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CRenderer.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -150,11 +150,13 @@
     <ClCompile Include="Chip8.cpp" />
     <ClCompile Include="Chip8_Opcodes.cpp" />
     <ClCompile Include="CProgLoader.cpp" />
+    <ClCompile Include="CRenderer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chip8.hpp" />
     <ClInclude Include="CProgLoader.hpp" />
+    <ClInclude Include="CRenderer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
