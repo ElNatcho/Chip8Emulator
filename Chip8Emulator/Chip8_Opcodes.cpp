@@ -261,13 +261,13 @@ void Chip8::drawSpr_0xDXYN() {
 	unsigned short pixel;
 
 	_reg_v->at(0xF) = 0;
-	for (int y = y_pos; y < h; y++) {
+	for (int y = 0; y < h; y++) {
 		pixel = _memory->at(*_reg_i + y);
 		for (int x = 0; x < 8; x++) {
 			if ((pixel & (0x80 >> x)) != 0) {
-				if (_displayMem->at(x + x_pos + (y * 64)) == 1)
+				if (_displayMem->at(x + x_pos + ((y + y_pos) * 64)) == 1)
 					_reg_v->at(0xF) = 1;
-				_displayMem->at(x + x_pos + (y * 64)) ^= 1;
+				_displayMem->at(x + x_pos + ((y + y_pos) * 64)) ^= 1;
 			}
 		}
 	}

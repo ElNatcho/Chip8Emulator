@@ -6,7 +6,7 @@ int main() {
 	CRenderer *renderer = new CRenderer();
 
 	chip8->init();
-	chip8->loadProg("test_disp.txt");
+	chip8->loadProg("prog1.txt");
 
 	renderer->renderDisplay(chip8->getDisplayMem());
 
