@@ -1,5 +1,49 @@
 #include"Chip8.hpp"
 
+// -- _setup_opcodes --
+// Methode füllt das Opcodemethodenzeigerarray mit den Methoden
+//
+void Chip8::_setup_opcodes() {
+	// Alloc Mem
+	_opcodeTable = new std::map<short, funcPtr>();
+
+	// Methoden in den table einfügen
+	_opcodeTable->insert(std::make_pair(0x0000, &Chip8::clear_screen_0x00E0));
+	_opcodeTable->insert(std::make_pair(0x000E, &Chip8::return_subr_0x00EE));
+	_opcodeTable->insert(std::make_pair(0x1000, &Chip8::jump_0x1NNN));
+	_opcodeTable->insert(std::make_pair(0x2000, &Chip8::call_subr_0x2NNN));
+	_opcodeTable->insert(std::make_pair(0x3000, &Chip8::comp_0x3XNN));
+	_opcodeTable->insert(std::make_pair(0x4000, &Chip8::compn_0x4XNN));
+	_opcodeTable->insert(std::make_pair(0x5000, &Chip8::compr_0x5XY0));
+	_opcodeTable->insert(std::make_pair(0x6000, &Chip8::setr_0x6XNN));
+	_opcodeTable->insert(std::make_pair(0x7000, &Chip8::add_0x7XNN));
+	_opcodeTable->insert(std::make_pair(0x8000, &Chip8::setr_0x8XY0));
+	_opcodeTable->insert(std::make_pair(0x8001, &Chip8::bitOR_0x8XY1));
+	_opcodeTable->insert(std::make_pair(0x8002, &Chip8::bitAND_0x8XY2));
+	_opcodeTable->insert(std::make_pair(0x8003, &Chip8::bitXOR_0x8XY3));
+	_opcodeTable->insert(std::make_pair(0x8004, &Chip8::addr_0x8XY4));
+	_opcodeTable->insert(std::make_pair(0x8005, &Chip8::subr_0x8XY5));
+	_opcodeTable->insert(std::make_pair(0x8006, &Chip8::bitShR_0x8XY6));
+	_opcodeTable->insert(std::make_pair(0x8007, &Chip8::subr_0x8XY7));
+	_opcodeTable->insert(std::make_pair(0x800E, &Chip8::bitShL_0x8XYE));
+	_opcodeTable->insert(std::make_pair(0x9000, &Chip8::compnr_0x9XY0));
+	_opcodeTable->insert(std::make_pair(0xA000, &Chip8::setI_0xANNN));
+	_opcodeTable->insert(std::make_pair(0xB000, &Chip8::jumpR_0xBNNN));
+	_opcodeTable->insert(std::make_pair(0xC000, &Chip8::setR_rand_0xCXNN));
+	_opcodeTable->insert(std::make_pair(0xD000, &Chip8::drawSpr_0xDXYN));
+	_opcodeTable->insert(std::make_pair(0xE00E, &Chip8::chkKeyR_0xEX9E));
+	_opcodeTable->insert(std::make_pair(0xE001, &Chip8::chkNKeyR_0xEXA1));
+	_opcodeTable->insert(std::make_pair(0xF007, &Chip8::setRTimer_0xFX07));
+	_opcodeTable->insert(std::make_pair(0xF00A, &Chip8::waitFKey_0xFX0A));
+	_opcodeTable->insert(std::make_pair(0xF015, &Chip8::setDTimer_0xFX15));
+	_opcodeTable->insert(std::make_pair(0xF018, &Chip8::setSTimer_0xFX18));
+	_opcodeTable->insert(std::make_pair(0xF01E, &Chip8::addI_0xFX1E));
+	_opcodeTable->insert(std::make_pair(0xF029, &Chip8::setItoSpr_0xFX29));
+	_opcodeTable->insert(std::make_pair(0xF033, &Chip8::set_BCD_0xFX33));
+	_opcodeTable->insert(std::make_pair(0xF055, &Chip8::reg_dump_0xFX55));
+	_opcodeTable->insert(std::make_pair(0xF065, &Chip8::reg_load_0xFX65));
+}
+
 // -- clear_screen_0x00E0 --
 // Methode cleared das Display
 //

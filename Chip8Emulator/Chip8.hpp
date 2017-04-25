@@ -5,6 +5,7 @@
 #include<SFML\Graphics.hpp>
 #include<iostream>
 #include<array>
+#include<map>
 
 // Vorwärtsdekleration
 class CProgLoader;
@@ -66,6 +67,9 @@ const unsigned char chip8_fontset[80] =
 class Chip8 {
 public:
 
+	// Funktionszeiger
+	typedef void(Chip8::*funcPtr)();
+
 	// -- Kon/Destruktor --
 	Chip8();
 	~Chip8();
@@ -104,7 +108,11 @@ private:
 
 	CProgLoader *_progLoader;
 
+	std::map<short, funcPtr> *_opcodeTable;
+
 	// -- Member Methods --
+
+	void _setup_opcodes();
 
 	// - OPCODES -
 	void clear_screen_0x00E0();
