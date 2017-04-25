@@ -15,7 +15,7 @@ class CProgLoader;
 #define REG_SIZE   16
 #define STACK_SIZE 16
 
-#define DISPLAY_SIZE 64 * 32
+#define DISPLAY_SIZE  64 * 32
 #define KEYBOARD_SIZE 16
 
 #define KEY_NOT_PRESSED 0
@@ -88,7 +88,7 @@ private:
 	std::array<BYTE, REG_SIZE> *_reg_v;
 	std::array<BYTE, KEYBOARD_SIZE> *_keyboardMem;
 	std::array<unsigned short, STACK_SIZE> *_stack;
-	std::array<BYTE , DISPLAY_SIZE> *_displayMem;
+	std::array<BYTE, DISPLAY_SIZE> *_displayMem;
 
 	unsigned short *_reg_i;
 	unsigned short *_reg_sp;
