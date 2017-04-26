@@ -142,10 +142,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCompiler.cpp" />
+    <ClCompile Include="CSrcLoader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCompiler.hpp" />
+    <ClInclude Include="CSrcLoader.hpp" />
+    <ClInclude Include="CStaticTools.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

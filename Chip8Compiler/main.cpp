@@ -1,6 +1,11 @@
-#include<iostream>
+#include"CSrcLoader.hpp"
 
 int main() {
-	std::cout << "Hallo, Welt" << std::endl;
+	CSrcLoader *ldr = new CSrcLoader();
+
+	ldr->loadSrc("test.txt");
+	
+	SAFE_DELETE(ldr);
+
 	return 0;
 }

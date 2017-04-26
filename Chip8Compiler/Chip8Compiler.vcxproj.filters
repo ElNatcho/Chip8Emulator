@@ -21,9 +21,18 @@
     <ClCompile Include="CCompiler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CSrcLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCompiler.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CSrcLoader.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CStaticTools.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
