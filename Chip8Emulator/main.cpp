@@ -1,12 +1,17 @@
 #include"Chip8.hpp"
 #include"CRenderer.hpp"
 
-int main() {
+int main(int argc, char **argv) {
+	if (argc != 2) {
+		std::cout << "Chip8Emulator.exe <ROM>" << std::endl;
+		return 0;
+	}
+
 	Chip8 *chip8 = new Chip8();
 	CRenderer *renderer = new CRenderer();
 
 	chip8->init();
-	chip8->loadProg("prog1.txt");
+	chip8->loadProg(argv[1]);
 
 	renderer->renderDisplay(chip8->getDisplayMem());
 
