@@ -113,10 +113,20 @@ void Chip8::execute() {
 	if (_it != _opcodeTable->end())
 		(this->*(_it->second))();
 
+	// PC erhöhen
 	if (*_reg_pc == *_old_pc)
 		*_reg_pc += 2;
 
 	*_old_pc = *_reg_pc;
+
+	// Timer updaten
+	if (*_delay_timer > 0)
+		*_delay_timer -= 1;
+	if (*_sound_timer > 0) {
+		*_sound_timer -= 1;
+		if(*_sound_timer == 0)
+			std::cout << "BUZZ" << std::endl;
+	}
 }
 
 // -- handleKeys --
