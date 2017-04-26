@@ -13,27 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Headerdateien\Compiler">
+      <UniqueIdentifier>{88d95813-226d-4773-95c4-dd1c31ae3065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Compiler">
+      <UniqueIdentifier>{ef0b54ad-14d7-4952-9af4-0dbe94987d96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Ressourcendateien</Filter>
     </ClCompile>
-    <ClCompile Include="CCompiler.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="CSrcLoader.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="CCompiler.cpp">
+      <Filter>Quelldateien\Compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CCompiler.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="CSrcLoader.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CStaticTools.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="CCompiler.hpp">
+      <Filter>Headerdateien\Compiler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Gueltige_Befehle.txt" />
   </ItemGroup>
 </Project>

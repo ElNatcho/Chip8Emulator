@@ -150,6 +150,9 @@
     <ClInclude Include="CSrcLoader.hpp" />
     <ClInclude Include="CStaticTools.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Gueltige_Befehle.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

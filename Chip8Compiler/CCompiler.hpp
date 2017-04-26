@@ -3,7 +3,12 @@
 
 // Includes
 #include<iostream>
+#include<string>
 #include<regex>
+
+const std::string valid_instr[] = {
+	" "
+};
 
 // CCompiler
 class CCompiler {
@@ -14,6 +19,7 @@ public:
 	~CCompiler();
 
 	// -- Methoden --
+
 
 private:
 
