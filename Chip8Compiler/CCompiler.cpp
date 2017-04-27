@@ -28,20 +28,16 @@ void CCompiler::compile() {
 // Methode sucht nach Jump-Adressen und speichert diese in der map bzw. löscht sie aus dem Code
 //
 void CCompiler::getJmpAddr() {
-	int dp_pos;
+	std::regex  reg(":[\\w\\d]+((\t)|(\\s))");
+	std::smatch match;
 	for (int i = 0; i < _sourceCode->size(); i++) { // Durch den kompletten Sourc-Code iterieren
-		dp_pos = -1;
-		dp_pos = _sourceCode->at(i).find(":");
-		if (dp_pos >= 0 && dp_pos < _sourceCode->at(i).length()) {
-			_jmpAddr->insert(std::make_pair( // Jmp-Adr einfügen
-				_sourceCode->at(i).substr(dp_pos, _sourceCode->at(i).find(" ", dp_pos)),
-				CODE_OFFSET + i * 2
+		if (std::regex_search(_sourceCode->at(i), match, reg)) {
+			_jmpAddr->insert(std::make_pair(
+				match.str().substr(1, match.str().size() - 2),
+				i * 2 + 0x200
 			));
-			for (int j = dp_pos; j < _sourceCode->at(i).size(); j++) {
-				if (_sourceCode->at(i).at(j) == ' ' || _sourceCode->at(i).at(j) == '\t') {
-					_sourceCode->at(i) = _sourceCode->at(i).substr(j);
-				}
-			}
+			_sourceCode->at(i) = match.suffix().str();
+			match.empty();
 		}
 	}
 }
