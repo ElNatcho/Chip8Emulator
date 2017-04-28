@@ -30,6 +30,9 @@
     <ClCompile Include="CCompiler.cpp">
       <Filter>Quelldateien\Compiler</Filter>
     </ClCompile>
+    <ClCompile Include="CCompiler_tMethods.cpp">
+      <Filter>Quelldateien\Compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSrcLoader.hpp">

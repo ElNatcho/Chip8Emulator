@@ -3,6 +3,7 @@
 
 // Includes
 #include<iostream>
+#include<sstream>
 #include<string>
 #include<vector>
 #include<regex>
@@ -11,6 +12,8 @@
 #include"CSrcLoader.hpp"
 
 #define CODE_OFFSET 0x200
+
+typedef unsigned char BYTE;
 
 // Gültige Befehle
 const std::string valid_instr[] = {
@@ -48,6 +51,9 @@ const std::string valid_instr[] = {
 class CCompiler {
 public:
 
+	// Funktionszeiger
+	typedef void(CCompiler::*FuncPtr)();
+
 	// -- Kon/Destruktor --
 	CCompiler();
 	~CCompiler();
@@ -63,6 +69,7 @@ private:
 	std::vector<std::string> *_sourceCode;
 
 	std::map<std::string, short> *_jmpAddr; // Map speichert die Adressen der Jump-Adressen
+	std::map<std::string, short>::iterator _jmpAddrIt;
 
 	std::vector<short> *_opcodes;
 
@@ -101,6 +108,14 @@ private:
 	short tBCD   (std::string args);
 	short tRDMP  (std::string args);
 	short tRLOD  (std::string args);
+
+	BYTE  _searchForRegister(std::string *args);
+	int _searchForNumber(std::string *args);
+	int _searchForAddress(std::string *args);
+	int _searchForHexNum(std::string *args);
+
+	int _s_hexToInt(std::string hex);
+	std::stringstream *_strs;
 
 };
 

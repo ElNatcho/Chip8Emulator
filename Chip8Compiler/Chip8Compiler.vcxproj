@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCompiler.cpp" />
+    <ClCompile Include="CCompiler_tMethods.cpp" />
     <ClCompile Include="CSrcLoader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

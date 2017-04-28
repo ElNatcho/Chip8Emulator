@@ -3,6 +3,7 @@
 // -- Konstruktor --
 CCompiler::CCompiler() {
 	// Alloc Mem
+	_strs = new std::stringstream();
 	_regex = new std::regex();
 	_match = new std::smatch();
 	_jmpAddr = new std::map<std::string, short>();
@@ -60,6 +61,7 @@ void CCompiler::_compileInstr(std::string instr) {
 // -- Destruktor --
 CCompiler::~CCompiler() {
 	// Free Mem
+	SAFE_DELETE(_strs);
 	SAFE_DELETE(_regex);
 	SAFE_DELETE(_match);
 	_jmpAddr->clear();
