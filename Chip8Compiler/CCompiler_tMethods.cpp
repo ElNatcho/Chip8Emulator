@@ -23,14 +23,12 @@ short CCompiler::tRET(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tJMP(std::string args) {
-	*_regex = "\\$[\\w\\d]+";
-	if (std::regex_search(args, *_match, *_regex)) {
-		_jmpAddrIt = _jmpAddr->find(_match->str().substr(1));
-		if (_jmpAddrIt != _jmpAddr->end()) {
-			return (0x1000 & (0x0FFF & _jmpAddrIt->second));
-		}
+	int addr = _searchForAddress(&args);
+	if (addr >= 0) {
+		return 0x1000 | (0x00000FFF & addr);
+	} else {
+		throw std::exception(("JMP: Unknown Paramter: " + args).c_str());
 	}
-	throw std::exception(("JMP: Unknown Paramter: " + args).c_str());
 }
 
 // -- tIE --
@@ -38,13 +36,13 @@ short CCompiler::tJMP(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tIE(std::string args) {
-	unsigned short reg = _searchForRegister(&args); // Nach VX suchen
+	u_16 reg = _searchForRegister(&args); // Nach VX suchen
 	if (reg > 0xF) {
 		throw std::exception(("IE: No valid register in: " + args).c_str());
 	}
 
 	// Nach VY oder 0xNN oder NN suchen
-	unsigned short param = _searchForRegister(&args);
+	u_16 param = _searchForRegister(&args);
 	if (param > 0xF) {
 		param = _searchForNumber(&args);
 		if (param < 0) {
@@ -55,8 +53,64 @@ short CCompiler::tIE(std::string args) {
 	} else {
 		return (0x5000 | (reg << 2) | (param << 1));
 	}
+}
 
-	
+// -- tIE --
+// Methode erstellt den IE opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tINE(std::string args) {
+	u_16 reg = _searchForRegister(&args); // Nach VX suchen
+	if (reg > 0xF) {
+		throw std::exception(("INE: No valid register in: " + args).c_str());
+	}
+
+	// Nach VY oder 0xNN oder NN suchen
+	u_16 param = _searchForRegister(&args);
+	if (param > 0xF) {
+		param = _searchForNumber(&args);
+		if (param < 0) {
+			throw std::exception(("IE: No valid second parameter in: " + args).c_str());
+		} else {
+			return (0x4000 | (reg << 2) | (0x00FF & param));
+		}
+	} else {
+		return (0x9000 | (reg << 2) | (param << 1));
+	}
+}
+
+// -- tMOV -- 
+// Methode erstellt den MOV opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tMOV(std::string args) {
+	*_regex = "(i|I)|((v|V)\\d{1})";
+	if (std::regex_search(args, *_match, *_regex)) {
+		args = _match->suffix();
+		if (_match->str().at(0) == 'V' || _match->str().at(0) == 'v') { // MOV VX
+			BYTE reg = _s_hexToInt(_match->str().substr(1));
+			u_16 param = _searchForRegister(&args); // Nach VY suchen
+			if (param > 0xF) { // VY wurde nicht gefunden
+				param = _searchForNumber(&args); // Nach absoluten Zahlen suchen
+				if (param < 0) { // Keine Zahl gefunden
+					throw std::exception(("MOV VX: No valid number or register in: " + args).c_str());
+				} else { // Zahl gefunden
+					return (0x6000 | (reg << 2) | (0x00FF & param));
+				}
+			} else { // VY wurde gefunden
+				return (0x8000 | (reg << 2) | (param << 1));
+			}
+		} else { // MOV I
+			u_16 addr = _searchForAddress(&args); // Nach Adresse prüfen
+			if (addr > 0) { // Adresse prüfen
+				return (0xA000 | (addr & 0x0FFF));
+			} else {
+				throw std::exception(("MOV I: No valid address in: " + args).c_str());
+			}
+		}
+	} else {
+		throw std::exception(("MOV: No valid parameter in: " + args).c_str());
+	}
 }
 
 // -- _searchForRegister --
@@ -64,7 +118,7 @@ short CCompiler::tIE(std::string args) {
 // @param args: String der durchsucht werden soll
 //
 BYTE CCompiler::_searchForRegister(std::string *args) {
-	*_regex = "V\\d{1}";
+	*_regex = "(v|V)\\d{1}";
 	if (std::regex_search(*args, *_match, *_regex)) {
 		*args = _match->suffix().str();
 		return _s_hexToInt(_match->str().substr(1));
@@ -104,6 +158,21 @@ int CCompiler::_searchForHexNum(std::string *args) {
 	} else {
 		return -1;
 	}
+}
+
+// -- _searchForAddress -- 
+// Methode sucht nach einer Sprung-Adresse
+// @param args: String der durchsucht werden soll
+//
+int CCompiler::_searchForAddress(std::string *args) {
+	*_regex = "\\$[\\w\\d]+";
+	if (std::regex_search(*args, *_match, *_regex)) {
+		_jmpAddrIt = _jmpAddr->find(_match->str().substr(1));
+		if (_jmpAddrIt != _jmpAddr->end()) {
+			return _jmpAddrIt->second;
+		}
+	}
+	return -1;
 }
 
 // -- s_hexToInt --

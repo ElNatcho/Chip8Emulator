@@ -13,7 +13,8 @@
 
 #define CODE_OFFSET 0x200
 
-typedef unsigned char BYTE;
+typedef unsigned char  BYTE;
+typedef unsigned short u_16;
 
 // Gültige Befehle
 const std::string valid_instr[] = {
@@ -52,7 +53,7 @@ class CCompiler {
 public:
 
 	// Funktionszeiger
-	typedef void(CCompiler::*FuncPtr)();
+	typedef short(CCompiler::*tFuncPtr)(std::string);
 
 	// -- Kon/Destruktor --
 	CCompiler();
