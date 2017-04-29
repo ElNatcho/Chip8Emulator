@@ -1,6 +1,2 @@
-:TOPKEK	MOV V1, 0xA
-	MOV V3, v0
-	IE V0, 0
 	IE v0, V2
 	INE V0, V2
-	INE V0, 22

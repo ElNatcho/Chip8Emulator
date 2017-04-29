@@ -5,6 +5,7 @@
 //
 void CCompiler::_setupTFMap() {
 	// Alloc Mem
+	_tempStr = new std::string();
 	_tFuncPtrs = new std::map<std::string, tFuncPtr>();
 
 	// Map füllen
@@ -62,10 +63,10 @@ short CCompiler::tIE(std::string args) {
 		if (param < 0) {
 			throw std::exception(("IE: No valid second parameter in: " + args).c_str());
 		} else {
-			return (0x3000 | (reg << 2) | (0x00FF & param));
+			return (0x3000 | (reg << 8) | (0x00FF & param));
 		}
 	} else {
-		return (0x5000 | (reg << 2) | (param << 1));
+		return (0x5000 | (reg << 8) | (param << 4));
 	}
 }
 
@@ -86,10 +87,10 @@ short CCompiler::tINE(std::string args) {
 		if (param < 0) {
 			throw std::exception(("IE: No valid second parameter in: " + args).c_str());
 		} else {
-			return (0x4000 | (reg << 2) | (0x00FF & param));
+			return (0x4000 | (reg << 8) | (0x00FF & param));
 		}
 	} else {
-		return (0x9000 | (reg << 2) | (param << 1));
+		return (0x9000 | (reg << 8) | (param << 4));
 	}
 }
 
@@ -109,10 +110,10 @@ short CCompiler::tMOV(std::string args) {
 				if (param < 0) { // Keine Zahl gefunden
 					throw std::exception(("MOV VX: No valid number or register in: " + args).c_str());
 				} else { // Zahl gefunden
-					return (0x6000 | (reg << 2) | (0x00FF & param));
+					return (0x6000 | (reg << 8) | (0x00FF & param));
 				}
 			} else { // VY wurde gefunden
-				return (0x8000 | (reg << 2) | (param << 1));
+				return (0x8000 | (reg << 8) | (param << 4));
 			}
 		} else if(_match->str()[0] == 'i' || _match->str()[0] == 'I') { // MOV I
 			args = _match->suffix();
@@ -137,8 +138,9 @@ short CCompiler::tMOV(std::string args) {
 BYTE CCompiler::_searchForRegister(std::string *args) {
 	*_regex = "(v|V)\\d{1}";
 	if (std::regex_search(*args, *_match, *_regex)) {
+		*_tempStr = _match->str().substr(1);
 		*args = _match->suffix().str();
-		return _s_hexToInt(_match->str().substr(1));
+		return _s_hexToInt(*_tempStr);
 	} else {
 		return 0x10;
 	}
@@ -150,13 +152,12 @@ BYTE CCompiler::_searchForRegister(std::string *args) {
 //
 int CCompiler::_searchForNumber(std::string *args) {
 	int e = _searchForHexNum(args);
-	std::string _tempNum;
 	if (e == -1) {
 		*_regex = "\\d+";
 		if (std::regex_search(*args, *_match, *_regex)) {
-			_tempNum = _match->str();
+			*_tempStr = _match->str();
 			*args = _match->suffix().str();
-			return std::stoi(_tempNum);
+			return std::stoi(*_tempStr);
 		} else {
 			return -1;
 		}
@@ -172,9 +173,9 @@ int CCompiler::_searchForNumber(std::string *args) {
 int CCompiler::_searchForHexNum(std::string *args) {
 	*_regex = "0x[0-1A-Fa-f]+";
 	if (std::regex_search(*args, *_match, *_regex)) {
-		std::string tmpStr = _match->str().substr(2);
+		*_tempStr = _match->str().substr(2);
 		*args = _match->suffix().str();
-		return _s_hexToInt(tmpStr);
+		return _s_hexToInt(*_tempStr);
 	} else {
 		return -1;
 	}

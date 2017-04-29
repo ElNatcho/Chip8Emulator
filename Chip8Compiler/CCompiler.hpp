@@ -125,6 +125,8 @@ private:
 	std::map<std::string, tFuncPtr> *_tFuncPtrs;
 	std::map<std::string, tFuncPtr>::iterator _tFPtrIt;
 
+	std::string *_tempStr;
+
 };
 
 #endif
