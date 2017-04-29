@@ -1,6 +1,20 @@
 #include"CCompiler.hpp"
 
-// -- setupTMap --
+// -- _setupTFMap --
+// Methode setzt die Übersetzungsfunktionszeigermap auf
+//
+void CCompiler::_setupTFMap() {
+	// Alloc Mem
+	_tFuncPtrs = new std::map<std::string, tFuncPtr>();
+
+	// Map füllen
+	_tFuncPtrs->insert(std::make_pair("CLS", &CCompiler::tCLS));
+	_tFuncPtrs->insert(std::make_pair("RET", &CCompiler::tRET));
+	_tFuncPtrs->insert(std::make_pair("JMP", &CCompiler::tJMP));
+	_tFuncPtrs->insert(std::make_pair("IE" , &CCompiler::tIE));
+	_tFuncPtrs->insert(std::make_pair("INE", &CCompiler::tINE));
+	_tFuncPtrs->insert(std::make_pair("MOV", &CCompiler::tMOV));
+}
 
 // -- tCLS --
 // Methode erstellt den CLS opcode
@@ -84,11 +98,11 @@ short CCompiler::tINE(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tMOV(std::string args) {
-	*_regex = "(i|I)|((v|V)\\d{1})";
+	*_regex = "(i|I)|((v|V)\\d)";
 	if (std::regex_search(args, *_match, *_regex)) {
-		args = _match->suffix();
-		if (_match->str().at(0) == 'V' || _match->str().at(0) == 'v') { // MOV VX
+		if (_match->str()[0] == 'v' || _match->str()[0] == 'V') { // MOV VX
 			BYTE reg = _s_hexToInt(_match->str().substr(1));
+			args = _match->suffix();
 			u_16 param = _searchForRegister(&args); // Nach VY suchen
 			if (param > 0xF) { // VY wurde nicht gefunden
 				param = _searchForNumber(&args); // Nach absoluten Zahlen suchen
@@ -100,13 +114,16 @@ short CCompiler::tMOV(std::string args) {
 			} else { // VY wurde gefunden
 				return (0x8000 | (reg << 2) | (param << 1));
 			}
-		} else { // MOV I
+		} else if(_match->str()[0] == 'i' || _match->str()[0] == 'I') { // MOV I
+			args = _match->suffix();
 			u_16 addr = _searchForAddress(&args); // Nach Adresse prüfen
 			if (addr > 0) { // Adresse prüfen
 				return (0xA000 | (addr & 0x0FFF));
 			} else {
 				throw std::exception(("MOV I: No valid address in: " + args).c_str());
 			}
+		} else {
+			throw std::exception(("MOV: No valid param in: " + args).c_str());
 		}
 	} else {
 		throw std::exception(("MOV: No valid parameter in: " + args).c_str());
@@ -133,11 +150,13 @@ BYTE CCompiler::_searchForRegister(std::string *args) {
 //
 int CCompiler::_searchForNumber(std::string *args) {
 	int e = _searchForHexNum(args);
+	std::string _tempNum;
 	if (e == -1) {
 		*_regex = "\\d+";
 		if (std::regex_search(*args, *_match, *_regex)) {
+			_tempNum = _match->str();
 			*args = _match->suffix().str();
-			return std::stoi(_match->str());
+			return std::stoi(_tempNum);
 		} else {
 			return -1;
 		}
@@ -153,8 +172,9 @@ int CCompiler::_searchForNumber(std::string *args) {
 int CCompiler::_searchForHexNum(std::string *args) {
 	*_regex = "0x[0-1A-Fa-f]+";
 	if (std::regex_search(*args, *_match, *_regex)) {
+		std::string tmpStr = _match->str().substr(2);
 		*args = _match->suffix().str();
-		return _s_hexToInt(_match->str().substr(2));
+		return _s_hexToInt(tmpStr);
 	} else {
 		return -1;
 	}
@@ -180,8 +200,9 @@ int CCompiler::_searchForAddress(std::string *args) {
 // @param hex: String der konvertiert werden soll
 //
 int CCompiler::_s_hexToInt(std::string hex) {
-	int tmpNum;
-	*_strs << hex;
-	*_strs >> tmpNum;
+	int tmpNum = 0;
+	*_strs << std::hex << hex;
+	*_strs >> std::hex >> tmpNum;
+	_strs->clear();
 	return tmpNum;
 }

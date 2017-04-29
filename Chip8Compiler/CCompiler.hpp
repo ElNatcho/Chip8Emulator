@@ -78,17 +78,19 @@ private:
 	std::smatch *_match;
 
 	// -- Member Methods --
-	void getJmpAddr();
+	void _getJmpAddr();
 	void _compileInstr(std::string instr);
 
 	// - Translate Methods -
+	void _setupTFMap();
+
 	short tCLS   (std::string args);
 	short tRET   (std::string args);
 	short tJMP   (std::string args);
 	short tIE    (std::string args);
 	short tINE   (std::string args);
 	short tMOV   (std::string args);
-	short tADD   (std::string args);
+	/*short tADD   (std::string args);
 	short tOR    (std::string args);
 	short tADD   (std::string args);
 	short tXOR   (std::string args);
@@ -108,7 +110,7 @@ private:
 	short tSISP  (std::string args);
 	short tBCD   (std::string args);
 	short tRDMP  (std::string args);
-	short tRLOD  (std::string args);
+	short tRLOD  (std::string args);*/
 
 	BYTE  _searchForRegister(std::string *args);
 	int _searchForNumber(std::string *args);
@@ -116,7 +118,12 @@ private:
 	int _searchForHexNum(std::string *args);
 
 	int _s_hexToInt(std::string hex);
+
+	// - Translate Vars -
 	std::stringstream *_strs;
+
+	std::map<std::string, tFuncPtr> *_tFuncPtrs;
+	std::map<std::string, tFuncPtr>::iterator _tFPtrIt;
 
 };
 

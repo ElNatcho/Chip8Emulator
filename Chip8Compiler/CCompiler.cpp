@@ -10,6 +10,8 @@ CCompiler::CCompiler() {
 	_opcodes = new std::vector<short>();
 	_srcLoader = new CSrcLoader();
 	_sourceCode = new std::vector<std::string>();
+
+	_setupTFMap();
 }
 
 // -- loadSrc --
@@ -25,16 +27,20 @@ void CCompiler::loadSrc(std::string path) {
 // Methode compilet den Source-Code
 //
 void CCompiler::compile() {
-	getJmpAddr();
-	for (int i = 0; i < _sourceCode->size(); i++) {
-		_compileInstr(_sourceCode->at(i));
+	try {
+		_getJmpAddr();
+		for (int i = 0; i < _sourceCode->size(); i++) {
+			_compileInstr(_sourceCode->at(i));
+		}
+	} catch (std::exception &e) {
+		std::cout << "ERR: " << e.what() << std::endl;
 	}
 }
 
 // -- getJmpAddr --
 // Methode sucht nach Jump-Adressen und speichert diese in der map bzw. löscht sie aus dem Code
 //
-void CCompiler::getJmpAddr() {
+void CCompiler::_getJmpAddr() {
 	*_regex = ":[\\w\\d]+((\t)|(\\s))";
 	for (int i = 0; i < _sourceCode->size(); i++) { // Durch den kompletten Sourc-Code iterieren
 		if (std::regex_search(_sourceCode->at(i), *_match, *_regex)) {
@@ -53,9 +59,22 @@ void CCompiler::getJmpAddr() {
 // @path instr: Instruktion die compiliert werden soll
 //
 void CCompiler::_compileInstr(std::string instr) {
-	*_regex = "((\\s*)|(\t*))[\\w]+(0?)((\\s*)|(\t*))";
-	std::regex_search(instr, *_match, *_regex);
-	std::cout << _match->str() << std::endl << std::endl;
+	*_regex = "[\\w]+(0?)";
+	if (std::regex_search(instr, *_match, *_regex)) {
+		_tFPtrIt = _tFuncPtrs->find(_match->str());
+		if (_tFPtrIt != _tFuncPtrs->end()) {
+			try {
+				_opcodes->push_back((this->*(_tFPtrIt->second))(_match->suffix().str()));
+			} catch (std::exception &e) {
+				std::cout << "ERROR: " << e.what() << std::endl;
+			}
+		} else {
+			throw std::exception(("ERR: No valid instr: " + _match->str()).c_str());
+		}
+	} else {
+		throw std::exception(("ERR: No valid instr. in: " + instr).c_str());
+	}
+	
 }
 
 // -- Destruktor --
