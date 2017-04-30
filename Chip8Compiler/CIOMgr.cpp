@@ -48,7 +48,7 @@ void CIOMgr::writeOpcodes(std::string path, std::vector<short> &opcodes) {
 
 	// Inhalt schreiben
 	for (int i = 0; i < opcodes.size(); i++) {
-		*_ofstream << opcodes.at(i);
+		*_ofstream << static_cast<unsigned short>(opcodes.at(i)) << "\n";
 	}
 
 	// Datei schliessen

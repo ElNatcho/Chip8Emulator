@@ -76,10 +76,20 @@ void CCompiler::_compileInstr(std::string instr) {
 				std::cout << "ERROR: " << e.what() << std::endl;
 			}
 		} else {
-			throw std::exception(("ERR: No valid instr: " + _match->str()).c_str());
+			*_tempParam = _searchForNumber(&_match->str());
+			if (*_tempParam < 0) {
+				throw std::exception(("ERR: No valid instr. in: " + instr).c_str());
+			} else {
+				_opcodes->push_back(*_tempParam);
+			}
 		}
 	} else {
-		throw std::exception(("ERR: No valid instr. in: " + instr).c_str());
+		*_tempParam = _searchForNumber(&instr);
+		if (*_tempParam < 0) {
+			throw std::exception(("ERR: No valid instr. in: " + instr).c_str());
+		} else {
+			_opcodes->push_back(*_tempParam);
+		}
 	}
 	
 }
