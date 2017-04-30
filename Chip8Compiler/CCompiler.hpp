@@ -9,7 +9,7 @@
 #include<regex>
 #include<map>
 #include"CStaticTools.hpp"
-#include"CSrcLoader.hpp"
+#include"CIOMgr.hpp"
 
 #define CODE_OFFSET 0x200
 
@@ -62,11 +62,12 @@ public:
 	// -- Methoden --
 	void loadSrc(std::string path);
 	void compile();
+	void writeOpc(std::string path);
 
 private:
 
 	// -- Member Vars --
-	CSrcLoader *_srcLoader;
+	CIOMgr *_ioMgr;
 	std::vector<std::string> *_sourceCode;
 
 	std::map<std::string, short> *_jmpAddr; // Map speichert die Adressen der Jump-Adressen

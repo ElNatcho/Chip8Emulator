@@ -19,13 +19,16 @@
     <Filter Include="Quelldateien\Compiler">
       <UniqueIdentifier>{ef0b54ad-14d7-4952-9af4-0dbe94987d96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\IO_Mngmt">
+      <UniqueIdentifier>{39a01262-0a7c-4c24-8b61-aec824e72f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\IO_Mngmt">
+      <UniqueIdentifier>{f51407bb-fc46-4781-9251-66fd1cd99679}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Ressourcendateien</Filter>
-    </ClCompile>
-    <ClCompile Include="CSrcLoader.cpp">
-      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="CCompiler.cpp">
       <Filter>Quelldateien\Compiler</Filter>
@@ -33,16 +36,19 @@
     <ClCompile Include="CCompiler_tMethods.cpp">
       <Filter>Quelldateien\Compiler</Filter>
     </ClCompile>
+    <ClCompile Include="CIOMgr.cpp">
+      <Filter>Quelldateien\IO_Mngmt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CSrcLoader.hpp">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="CStaticTools.hpp">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CCompiler.hpp">
       <Filter>Headerdateien\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CIOMgr.hpp">
+      <Filter>Headerdateien\IO_Mngmt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -143,12 +143,12 @@
   <ItemGroup>
     <ClCompile Include="CCompiler.cpp" />
     <ClCompile Include="CCompiler_tMethods.cpp" />
-    <ClCompile Include="CSrcLoader.cpp" />
+    <ClCompile Include="CIOMgr.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCompiler.hpp" />
-    <ClInclude Include="CSrcLoader.hpp" />
+    <ClInclude Include="CIOMgr.hpp" />
     <ClInclude Include="CStaticTools.hpp" />
   </ItemGroup>
   <ItemGroup>

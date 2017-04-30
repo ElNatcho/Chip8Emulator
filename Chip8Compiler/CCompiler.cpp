@@ -6,9 +6,9 @@ CCompiler::CCompiler() {
 	_strs = new std::stringstream();
 	_regex = new std::regex();
 	_match = new std::smatch();
+	_ioMgr = new CIOMgr();
 	_jmpAddr = new std::map<std::string, short>();
 	_opcodes = new std::vector<short>();
-	_srcLoader = new CSrcLoader();
 	_sourceCode = new std::vector<std::string>();
 
 	_setupTFMap();
@@ -19,8 +19,7 @@ CCompiler::CCompiler() {
 // @param path: Pfad zur/Name der Src-Datei
 //
 void CCompiler::loadSrc(std::string path) {
-	_srcLoader->loadSrc(path);
-	*_sourceCode = _srcLoader->getSrcCode();
+	*_sourceCode = _ioMgr->loadSrc(path);
 }
 
 // -- compile --
@@ -35,6 +34,14 @@ void CCompiler::compile() {
 	} catch (std::exception &e) {
 		std::cout << "ERR: " << e.what() << std::endl;
 	}
+}
+
+// -- writeOpc --
+// Methode exportiert die erzeugten Opcodes in eine Datei
+// @param path: Pfad zur/Name der Datei
+//
+void CCompiler::writeOpc(std::string path) {
+	_ioMgr->writeOpcodes(path, *_opcodes);
 }
 
 // -- getJmpAddr --
@@ -87,7 +94,7 @@ CCompiler::~CCompiler() {
 	SAFE_DELETE(_jmpAddr);
 	_opcodes->clear();
 	SAFE_DELETE(_opcodes);
-	SAFE_DELETE(_srcLoader);
+	SAFE_DELETE(_ioMgr);
 	_sourceCode->clear();
 	SAFE_DELETE(_sourceCode);
 }
