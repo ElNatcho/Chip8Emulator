@@ -166,7 +166,7 @@ short CCompiler::tADD(std::string args) {
 			*_tempReg = _s_hexToInt(_match->str().substr(1));
 			args = _match->suffix().str();
 			*_tempParam = _searchForRegister(&args);
-			if (*_tempParam < 0) {
+			if (*_tempParam > 0xF) {
 				*_tempParam = _searchForNumber(&args); // Nach absoluten Zahlen suchen
 				if (*_tempParam < 0) { // Keine Zahl gefunden
 					throw std::exception(("ADD VX: No valid number or register in: " + args).c_str());
