@@ -6,6 +6,9 @@
 void CCompiler::_setupTFMap() {
 	// Alloc Mem
 	_tempStr = new std::string();
+	_tempReg = new u_16;
+	_tempAddr = new short;
+	_tempParam = new u_16;
 	_tFuncPtrs = new std::map<std::string, tFuncPtr>();
 
 	// Map füllen
@@ -131,6 +134,224 @@ short CCompiler::tMOV(std::string args) {
 	}
 }
 
+// -- tADD --
+// Methode erstellt den ADD opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tADD(std::string args) {
+	*_regex = "(i|I)|((v|V)\\d)";
+	if (std::regex_search(args, *_match, *_regex)) {
+		if (_match->str()[0] == 'v' || _match->str()[0] == 'V') { // ADD to VX
+			*_tempReg = _s_hexToInt(_match->str().substr(1));
+			args = _match->suffix();
+			*_tempParam = _searchForNumber(&args);
+			if (*_tempParam < 0) {
+				*_tempParam = _searchForNumber(&args); // Nach absoluten Zahlen suchen
+				if (*_tempParam < 0) { // Keine Zahl gefunden
+					throw std::exception(("ADD VX: No valid number or register in: " + args).c_str());
+				} else { // Zahl gefunden
+					return (0x8004 | (*_tempReg << 8) | (0x00FF & *_tempParam));
+				}
+			} else {
+				return (0x7000 | (*_tempReg << 8) | (0x00FF & *_tempParam));
+			}
+		} else if (_match->str()[0] == 'i' || _match->str()[0] == 'I') { // ADD to I
+			args = _match->suffix();
+			*_tempReg = _searchForRegister(&args);
+			if (*_tempReg > 0xF) {
+				throw std::exception(("ADD: No valid register in: " + args).c_str());
+			} else {
+				return (0xF01E | (*_tempReg << 8));
+			}
+		} else {
+			throw std::exception(("ADD: No valid param in: " + args).c_str());
+		}
+	} else {
+		throw std::exception(("ADD: No valid parameter in: " + args).c_str());
+	}
+}
+
+// -- tOR --
+// Methode erstellt den OR opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tOR(std::string args) {
+	return t2Regs(args, 0x8001, "OR");
+}
+
+// -- tAND --
+// Methode erstellt den AND opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tAND(std::string args) {
+	return t2Regs(args, 0x8002, "AND");
+}
+
+// -- tXOR --
+// Methode erstellt den XOR opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tXOR(std::string args) {
+	return t2Regs(args, 0x8003, "XOR");
+}
+
+// -- tSUB --
+// Methode erstellt den SUB opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tSUB(std::string args) {
+	return t2Regs(args, 0x8005, "SUB");
+}
+
+// -- tRSH --
+// Methode erstellt den RSH opcode 
+// @param args: Parameter der Funktion
+//
+short CCompiler::tRSH(std::string args) {
+	return t1Reg(args, 0x8006, "RSH");
+}
+
+// -- tSUBC --
+// Methode erstellt den SUBC opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tSUBC(std::string args) {
+	return t2Regs(args, 0x8007, "SUBC");
+}
+
+// -- tLSH --
+// Methode erstellt den LSH opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tLSH(std::string args) {
+	return t1Reg(args, 0x800E, "LSH");
+}
+
+// -- tJMP0 --
+// Methode erstellt den JMP0 opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tJMP0(std::string args) {
+	*_tempParam = _searchForNumber(&args);
+	if (*_tempParam < -1) {
+		throw std::exception(("JMP0: No valid number in: " + args).c_str());
+	} else {
+		return (0xB000 | (0x0FFF & *_tempParam));
+	}
+}
+
+// -- tRND --
+// Methode erstellt den RND opcode 
+// @param args: Parameter der Funktion
+//
+short CCompiler::tRND(std::string args) {
+	*_tempReg = _searchForRegister(&args);
+	if (*_tempReg > 0xF) {
+		throw std::exception(("RND: No valid register in: " + args).c_str());
+	} else {
+		*_tempParam = _searchForNumber(&args);
+		if (*_tempParam < -1) {
+			throw std::exception(("JMP0: No valid number in: " + args).c_str());
+		} else {
+			return (0xC000 | (*_tempReg << 8) | (0x00FF & *_tempParam));
+		}
+	}
+}
+
+// -- tDRW --
+// Methode erstellt den DRW opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tDRW(std::string args) {
+	*_tempAddr = t2Regs(args, 0xD000, "DRW");
+	*_tempParam = _searchForNumber(&args);
+	if (*_tempParam < -1) {
+		throw std::exception(("JMP0: No valid number in: " + args).c_str());
+	} else {
+		return (*_tempAddr | (0x00FF & *_tempParam));
+	}
+}
+
+// -- tIKPR --
+// Methode erstellt den IKPR opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tIKPR(std::string args){
+	return t1Reg(args, 0xE09E, "IKPR");
+}
+
+// -- tIKNPR --
+// Methode erstellt den IKNPR opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tIKNPR(std::string args) {
+	return t1Reg(args, 0xE0A1, "IKNPR");
+}
+
+// -- tGDT --
+// Methode erstellt den GDT opcode
+// @param args: Parameter der Funktion
+// 
+short CCompiler::tGDT(std::string args) {
+	return t1Reg(args, 0xF007, "GDT");
+}
+
+// -- tWFKPR --
+// Methode erstellt den WFKPR opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tWFKPR(std::string args) {
+	return t1Reg(args, 0xF00A, "WFKPR");
+}
+
+// -- tSDT --
+// Methode erstellt den SDT opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tSDT(std::string args) {
+	return t1Reg(args, 0xF015, "SDT");
+}
+
+// -- tSST --
+// Methode erstellt den SST opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tSST(std::string args) {
+	return t1Reg(args, 0xF018, "SST");
+}
+
+// -- tSISP --
+// Methode erstellt den SISP opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tSISP(std::string args) {
+	return t1Reg(args, 0xF029, "SISP");
+}
+
+// -- tBCD --
+// Methode erstellt den BCD opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tBCD(std::string args) {
+	return t1Reg(args, 0xF033, "BCD");
+}
+
+// -- tRDMP --
+// Methode erstellt den RDMP opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tRDMP(std::string args) {
+	return t1Reg(args, 0xF055, "RDMP");
+}
+
+// -- tRLOD --
+// Methode erstellt den RLOD opcode
+// @param args: Parameter der Funktion
+//
+short CCompiler::tRLOD(std::string args) {
+	return t1Reg(args, 0xF065, "RLOD");
+}
+
 // -- _searchForRegister --
 // Methode sucht im einem String nach einem Register
 // @param args: String der durchsucht werden soll
@@ -206,4 +427,39 @@ int CCompiler::_s_hexToInt(std::string hex) {
 	*_strs >> std::hex >> tmpNum;
 	_strs->clear();
 	return tmpNum;
+}
+
+// -- t1Reg --
+// Methode dient als template für die RSH, LSH, ... Instruktionen
+// @param args      : Parameter der Funktion
+// @param opcode_raw: Späterer Opcode
+// @param operation : Name der Instruktion
+//
+short CCompiler::t1Reg(std::string args, short opcode_raw, std::string operation) {
+	*_tempReg = _searchForRegister(&args);
+	if (*_tempReg > 0xF) {
+		throw std::exception((operation + ": No valid register in: " + args).c_str());
+	} else {
+		return (opcode_raw | (*_tempReg << 8));
+	}
+}
+
+// -- t2Regs --
+// Methode dient als template für die OR, AND, XOR, SUB... Instruktionen
+// @param args      : Parameter der Funktion
+// @param opcode_raw: Späterer Opcode
+// @param operation : Name der Instruktion
+//
+short CCompiler::t2Regs(std::string args, short opcode_raw, std::string operation) {
+	*_tempReg = _searchForRegister(&args);
+	if (*_tempReg > 0xF) {
+		throw std::exception((operation + ": No valid register in: " + args).c_str());
+	} else {
+		*_tempParam = _searchForRegister(&args);
+		if (*_tempParam > 0xF) {
+			throw std::exception((operation + ": No valid register in: " + args).c_str());
+		} else {
+			return (opcode_raw | (*_tempReg << 8) | (*_tempParam << 4));
+		}
+	}
 }

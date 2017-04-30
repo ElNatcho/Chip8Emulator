@@ -90,9 +90,9 @@ private:
 	short tIE    (std::string args);
 	short tINE   (std::string args);
 	short tMOV   (std::string args);
-	/*short tADD   (std::string args);
-	short tOR    (std::string args);
 	short tADD   (std::string args);
+	short tOR    (std::string args);
+	short tAND   (std::string args);
 	short tXOR   (std::string args);
 	short tSUB   (std::string args);
 	short tRSH   (std::string args);
@@ -110,7 +110,10 @@ private:
 	short tSISP  (std::string args);
 	short tBCD   (std::string args);
 	short tRDMP  (std::string args);
-	short tRLOD  (std::string args);*/
+	short tRLOD  (std::string args);
+
+	short t1Reg (std::string args, short opcode_raw, std::string operation);
+	short t2Regs(std::string args, short opcode_raw, std::string operation);
 
 	BYTE  _searchForRegister(std::string *args);
 	int _searchForNumber(std::string *args);
@@ -126,6 +129,10 @@ private:
 	std::map<std::string, tFuncPtr>::iterator _tFPtrIt;
 
 	std::string *_tempStr;
+
+	u_16 *_tempReg;
+	u_16 *_tempParam;
+	short *_tempAddr;
 
 };
 
