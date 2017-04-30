@@ -112,8 +112,8 @@ private:
 	short tRDMP  (std::string args);
 	short tRLOD  (std::string args);
 
-	short t1Reg (std::string args, short opcode_raw, std::string operation);
-	short t2Regs(std::string args, short opcode_raw, std::string operation);
+	short t1Reg (std::string  args, short opcode_raw, std::string operation);
+	short t2Regs(std::string *args, short opcode_raw, std::string operation);
 
 	BYTE  _searchForRegister(std::string *args);
 	int _searchForNumber(std::string *args);

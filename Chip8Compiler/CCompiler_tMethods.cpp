@@ -12,12 +12,33 @@ void CCompiler::_setupTFMap() {
 	_tFuncPtrs = new std::map<std::string, tFuncPtr>();
 
 	// Map füllen
-	_tFuncPtrs->insert(std::make_pair("CLS", &CCompiler::tCLS));
-	_tFuncPtrs->insert(std::make_pair("RET", &CCompiler::tRET));
-	_tFuncPtrs->insert(std::make_pair("JMP", &CCompiler::tJMP));
-	_tFuncPtrs->insert(std::make_pair("IE" , &CCompiler::tIE));
-	_tFuncPtrs->insert(std::make_pair("INE", &CCompiler::tINE));
-	_tFuncPtrs->insert(std::make_pair("MOV", &CCompiler::tMOV));
+	_tFuncPtrs->insert(std::make_pair("CLS"  , &CCompiler::tCLS));
+	_tFuncPtrs->insert(std::make_pair("RET"  , &CCompiler::tRET));
+	_tFuncPtrs->insert(std::make_pair("JMP"  , &CCompiler::tJMP));
+	_tFuncPtrs->insert(std::make_pair("IE"   , &CCompiler::tIE));
+	_tFuncPtrs->insert(std::make_pair("INE"  , &CCompiler::tINE));
+	_tFuncPtrs->insert(std::make_pair("MOV"  , &CCompiler::tMOV));
+	_tFuncPtrs->insert(std::make_pair("ADD"  , &CCompiler::tADD));
+	_tFuncPtrs->insert(std::make_pair("OR"   , &CCompiler::tOR));
+	_tFuncPtrs->insert(std::make_pair("AND"  , &CCompiler::tAND));
+	_tFuncPtrs->insert(std::make_pair("XOR"  , &CCompiler::tXOR));
+	_tFuncPtrs->insert(std::make_pair("SUB"  , &CCompiler::tSUB));
+	_tFuncPtrs->insert(std::make_pair("RSH"  , &CCompiler::tRSH));
+	_tFuncPtrs->insert(std::make_pair("SUBC" , &CCompiler::tSUBC));
+	_tFuncPtrs->insert(std::make_pair("LSH"  , &CCompiler::tLSH));
+	_tFuncPtrs->insert(std::make_pair("JMP0" , &CCompiler::tJMP0));
+	_tFuncPtrs->insert(std::make_pair("RND"  , &CCompiler::tRND));
+	_tFuncPtrs->insert(std::make_pair("DRW"  , &CCompiler::tDRW));
+	_tFuncPtrs->insert(std::make_pair("IKPR" , &CCompiler::tIKPR));
+	_tFuncPtrs->insert(std::make_pair("IKNPR", &CCompiler::tIKNPR));
+	_tFuncPtrs->insert(std::make_pair("GDT"  , &CCompiler::tGDT));
+	_tFuncPtrs->insert(std::make_pair("WFKPR", &CCompiler::tWFKPR));
+	_tFuncPtrs->insert(std::make_pair("SDT"  , &CCompiler::tSDT));
+	_tFuncPtrs->insert(std::make_pair("SST"  , &CCompiler::tSST));
+	_tFuncPtrs->insert(std::make_pair("SISP" , &CCompiler::tSISP));
+	_tFuncPtrs->insert(std::make_pair("BCD"  , &CCompiler::tBCD));
+	_tFuncPtrs->insert(std::make_pair("RDMP" , &CCompiler::tRDMP));
+	_tFuncPtrs->insert(std::make_pair("RLOD" , &CCompiler::tRLOD));
 }
 
 // -- tCLS --
@@ -143,17 +164,17 @@ short CCompiler::tADD(std::string args) {
 	if (std::regex_search(args, *_match, *_regex)) {
 		if (_match->str()[0] == 'v' || _match->str()[0] == 'V') { // ADD to VX
 			*_tempReg = _s_hexToInt(_match->str().substr(1));
-			args = _match->suffix();
-			*_tempParam = _searchForNumber(&args);
+			args = _match->suffix().str();
+			*_tempParam = _searchForRegister(&args);
 			if (*_tempParam < 0) {
 				*_tempParam = _searchForNumber(&args); // Nach absoluten Zahlen suchen
 				if (*_tempParam < 0) { // Keine Zahl gefunden
 					throw std::exception(("ADD VX: No valid number or register in: " + args).c_str());
 				} else { // Zahl gefunden
-					return (0x8004 | (*_tempReg << 8) | (0x00FF & *_tempParam));
+					return (0x7000 | (*_tempReg << 8) | (0x00FF & *_tempParam));
 				}
 			} else {
-				return (0x7000 | (*_tempReg << 8) | (0x00FF & *_tempParam));
+				return (0x8004 | (*_tempReg << 8) | (*_tempParam << 4));
 			}
 		} else if (_match->str()[0] == 'i' || _match->str()[0] == 'I') { // ADD to I
 			args = _match->suffix();
@@ -176,7 +197,7 @@ short CCompiler::tADD(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tOR(std::string args) {
-	return t2Regs(args, 0x8001, "OR");
+	return t2Regs(&args, 0x8001, "OR");
 }
 
 // -- tAND --
@@ -184,7 +205,7 @@ short CCompiler::tOR(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tAND(std::string args) {
-	return t2Regs(args, 0x8002, "AND");
+	return t2Regs(&args, 0x8002, "AND");
 }
 
 // -- tXOR --
@@ -192,7 +213,7 @@ short CCompiler::tAND(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tXOR(std::string args) {
-	return t2Regs(args, 0x8003, "XOR");
+	return t2Regs(&args, 0x8003, "XOR");
 }
 
 // -- tSUB --
@@ -200,7 +221,7 @@ short CCompiler::tXOR(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tSUB(std::string args) {
-	return t2Regs(args, 0x8005, "SUB");
+	return t2Regs(&args, 0x8005, "SUB");
 }
 
 // -- tRSH --
@@ -216,7 +237,7 @@ short CCompiler::tRSH(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tSUBC(std::string args) {
-	return t2Regs(args, 0x8007, "SUBC");
+	return t2Regs(&args, 0x8007, "SUBC");
 }
 
 // -- tLSH --
@@ -263,7 +284,7 @@ short CCompiler::tRND(std::string args) {
 // @param args: Parameter der Funktion
 //
 short CCompiler::tDRW(std::string args) {
-	*_tempAddr = t2Regs(args, 0xD000, "DRW");
+	*_tempAddr = t2Regs(&args, 0xD000, "DRW");
 	*_tempParam = _searchForNumber(&args);
 	if (*_tempParam < -1) {
 		throw std::exception(("JMP0: No valid number in: " + args).c_str());
@@ -357,7 +378,7 @@ short CCompiler::tRLOD(std::string args) {
 // @param args: String der durchsucht werden soll
 //
 BYTE CCompiler::_searchForRegister(std::string *args) {
-	*_regex = "(v|V)\\d{1}";
+	*_regex = "(v|V)[0-9A-Fa-f]{1}";
 	if (std::regex_search(*args, *_match, *_regex)) {
 		*_tempStr = _match->str().substr(1);
 		*args = _match->suffix().str();
@@ -392,7 +413,7 @@ int CCompiler::_searchForNumber(std::string *args) {
 // @param args: String der durchsucht werden soll
 //
 int CCompiler::_searchForHexNum(std::string *args) {
-	*_regex = "0x[0-1A-Fa-f]+";
+	*_regex = "0x[0-9A-Fa-f]+";
 	if (std::regex_search(*args, *_match, *_regex)) {
 		*_tempStr = _match->str().substr(2);
 		*args = _match->suffix().str();
@@ -450,14 +471,14 @@ short CCompiler::t1Reg(std::string args, short opcode_raw, std::string operation
 // @param opcode_raw: Späterer Opcode
 // @param operation : Name der Instruktion
 //
-short CCompiler::t2Regs(std::string args, short opcode_raw, std::string operation) {
-	*_tempReg = _searchForRegister(&args);
+short CCompiler::t2Regs(std::string *args, short opcode_raw, std::string operation) {
+	*_tempReg = _searchForRegister(args);
 	if (*_tempReg > 0xF) {
-		throw std::exception((operation + ": No valid register in: " + args).c_str());
+		throw std::exception((operation + ": No valid register in: " + *args).c_str());
 	} else {
-		*_tempParam = _searchForRegister(&args);
+		*_tempParam = _searchForRegister(args);
 		if (*_tempParam > 0xF) {
-			throw std::exception((operation + ": No valid register in: " + args).c_str());
+			throw std::exception((operation + ": No valid register in: " + *args).c_str());
 		} else {
 			return (opcode_raw | (*_tempReg << 8) | (*_tempParam << 4));
 		}
