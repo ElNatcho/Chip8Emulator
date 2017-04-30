@@ -99,6 +99,8 @@ void Chip8::execute() {
 	// Fetch opcode
 	*_opcode = _memory->at(*_reg_pc) << 8 | _memory->at(*_reg_pc + 1);
 
+	std::cout << "AktuellerOpcode: " << std::hex << *_opcode << std::dec << std::endl;
+
 	// Decode opcode
 
 	// Instruktion ausführen
