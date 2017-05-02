@@ -309,8 +309,9 @@ void Chip8::setRTimer_0xFX07() {
 void Chip8::waitFKey_0xFX0A() {
 	do {
 		handleKeys();
-	} while (*_keyPushedFlag);
+	} while (!*_keyPushedFlag);
 	_reg_v->at((*_opcode & 0x0F00) >> 8) = *_lastKeyPushed;
+	
 	//*_reg_pc += 2;
 }
 
