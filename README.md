@@ -4,7 +4,7 @@ Ein einfacher Emulater der Chip8-Programme ausführen kann. Zurzeit können nur 
 compiliert wurden!
 
 Man kann eine ROM mithilfe von Kommandozeilenparametern starten:  
-  Chip8.exe <fsdfasdf><ROM>
+  Chip8.exe "ROM"
   
 # Chip8Compiler
 
@@ -12,7 +12,7 @@ Ein einfacher Compiler der Source-Code zu einer ROM compiliert. Der Source-Code 
 bestehen.
 
 Eine ROM kann mithilfe von Kommandozeilenparametern erstellt werden:  
-  Chip8Compiler <SRC_FILE> <ROM_NAME>
+  Chip8Compiler "SRC_FILE" "ROM_NAME"
   
 # HexConv
 
