@@ -4,7 +4,7 @@ Ein einfacher Emulater der Chip8-Programme ausführen kann. Zurzeit können nur 
 compiliert wurden!
 
 Man kann eine ROM mithilfe von Kommandozeilenparametern starten:  
-  Chip8.exe <ROM>
+  Chip8.exe <fsdfasdf><ROM>
   
 # Chip8Compiler
 
