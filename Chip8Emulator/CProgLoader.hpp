@@ -19,6 +19,7 @@ public:
 
 	// -- Methoden --
 	void loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem);
+	void loadProgFNB(std::string path, std::array<BYTE, MEM_SIZE> *mem);
 
 private:
 
@@ -26,6 +27,7 @@ private:
 	int *_curPos;
 
 	std::ifstream *_ifstream;
+
 	std::string *_tempStr;
 
 	short *_curOpcode;

@@ -10,19 +10,49 @@ CProgLoader::CProgLoader() {
 }
 
 // -- loadProg --
-// Methode lädt ein Programm aus einer Datei
+// Methode lädt Programm aus einer ROM
 // @param path: Pfad zum/Name des Programms
 // @param mem : Ptr zum Mem-Array in welches das Programm geschrieben werden soll
 //
 void CProgLoader::loadProg(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
 	*_curPos = 0x200;
 	*_curOpcode = 0;
+	
+	char tB; // Temporäres Byte
+
+	// Datei öffnen
+	if (_ifstream->is_open())
+		_ifstream->close();
+	_ifstream->open(path, std::ios::in | std::ios::binary);
+
+	// Datei lesen
+	while (!_ifstream->eof()) {
+		try {
+			_ifstream->get(tB);
+			mem->at(*_curPos) = tB;
+		} catch (std::exception &e) {
+			std::cout << "Datei " << path << " konnte nicht geladen werden: " << e.what() << std::endl;
+			mem->at(*_curPos) = 0;
+		}
+		*_curPos += 1;
+	}
+}
+
+// -- loadProgFNB --
+// Methode lädt ein Programm aus einer nicht binären Datei
+// @param path: Pfad zum/Name des Programms
+// @param mem : Ptr zum Mem-Array in welches das Programm geschrieben werden soll
+//
+void CProgLoader::loadProgFNB(std::string path, std::array<BYTE, MEM_SIZE> *mem) {
+	*_curPos = 0x200;
+	*_curOpcode = 0;
+	
 	*_tempStr = "";
 
 	// Datei öffnen
 	if (_ifstream->is_open())
 		_ifstream->close();
-	_ifstream->open(path);
+	_ifstream->open(path, std::ios::in | std::ios::binary);
 
 	// Daten lesen
 	while (!_ifstream->eof() && *_curPos < MEM_SIZE){

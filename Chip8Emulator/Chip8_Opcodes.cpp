@@ -59,6 +59,7 @@ void Chip8::clear_screen_0x00E0() {
 void Chip8::return_subr_0x00EE() {
 	*_reg_sp -= 1;
 	*_reg_pc = _stack->at(*_reg_sp);
+	*_reg_pc += 2;
 }
 
 // -- jump_0x1NNN --
